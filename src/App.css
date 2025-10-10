@@ -1,0 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #f8f9fa;
+}
+
+.App {
+  min-height: 100vh;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* PRINT ONLY: tampilkan salinan invoice, sembunyikan UI lain */
+@media print {
+  /* ukuran & margin kertas thermal */
+  @page { size: 80mm auto; margin: 0; }
+
+  /* semua layar normal disembunyikan */
+  .no-print-page { display: none !important; }
+
+  /* area khusus print aktif */
+  #print-invoice { display: block !important; }
+
+  html, body { background: #fff !important; }
+}
+
+/* default: salinan invoice tidak tampak di layar */
+#print-invoice { display: none; }
