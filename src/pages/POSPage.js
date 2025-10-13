@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { AuthContext, API } from "../App";
+import { AuthContext, API } from "../App"; // Pastikan path ini sesuai
 import axios from "axios";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -24,6 +24,7 @@ import {
   Image as ImageIcon,
   Pencil,
   X,
+  List,
 } from "lucide-react";
 
 function POSPage() {
@@ -40,7 +41,7 @@ function POSPage() {
 
   // payment
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState("qris"); // 'qris' | 'edc_debit'
+  const [paymentMethod, setPaymentMethod] = useState("qris");
   const [qrisAcquirer, setQrisAcquirer] = useState("");
   const [qrisRrn, setQrisRrn] = useState("");
   const [edcIssuer, setEdcIssuer] = useState("");
@@ -73,6 +74,8 @@ function POSPage() {
   const [eActive, setEActive] = useState(true);
   const [eImage, setEImage] = useState(null);
   const [eImagePreview, setEImagePreview] = useState(null);
+
+  const [mobileView, setMobileView] = useState("products");
 
   useEffect(() => {
     fetchProducts();
@@ -295,278 +298,322 @@ function POSPage() {
 
   // ======================= UI =======================
   return (
-    <div
-      className="flex h-full gap-4 flex-col md:flex-row"
-      data-testid="pos-page"
-    >
-      {/* LEFT - Products */}
-      <div className="md:w-2/5 w-full flex flex-col">
-        <div className="mb-2 flex items-center justify-between">
-          <div className="font-semibold text-base text-gray-700">Katalog</div>
-          {isAdmin && (
-            <Button
-              onClick={() => setShowCreateProduct(true)}
-              className="gap-2"
-              style={{ background: "#009CDE", color: "white" }}
-              size="sm"
-              data-testid="btn-open-create-product"
-            >
-              <Plus size={16} />
-              Tambah Produk
-            </Button>
-          )}
-        </div>
-
-        <Card className="p-3 md:p-4 mb-3 md:mb-4">
-          <div className="relative">
-            <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-              size={18}
-            />
-            <Input
-              placeholder="Cari produk (nama, SKU, barcode)..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-        </Card>
-
-        <Card className="flex-1 overflow-y-auto p-3 md:p-4">
-          <h3 className="font-semibold text-lg mb-3 md:mb-4">Produk</h3>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-3">
-            {products.map((product) => (
-              <div
-                key={product.id}
-                className="p-3 border-2 rounded-lg text-left hover:border-[#009CDE] transition-all"
-                style={{ borderColor: "#e5e7eb" }}
+    <div className="relative h-full w-full" data-testid="pos-page">
+      <div className="flex h-full flex-col gap-4 p-4 pb-20 lg:flex-row lg:pb-4">
+        {/* LEFT - Products (Conditional View) */}
+        <div
+          className={`w-full flex-col lg:flex lg:w-3/5 xl:w-2/3 ${
+            mobileView === "products" ? "flex" : "hidden"
+          }`}
+        >
+          {/* Header Katalog */}
+          <div className="mb-2 flex items-center justify-between">
+            <div className="text-base font-semibold text-gray-700">Katalog</div>
+            {isAdmin && (
+              <Button
+                onClick={() => setShowCreateProduct(true)}
+                className="gap-2"
+                style={{ background: "#009CDE", color: "white" }}
+                size="sm"
+                data-testid="btn-open-create-product"
               >
-                <button
-                  onClick={() => addToCart(product)}
-                  className="w-full text-left"
-                >
-                  {/* Gambar produk: rapi & jelas */}
-                  <div className="mb-2 overflow-hidden rounded-lg border bg-[#1E9BD5]">
-                    <div className="relative aspect-[4/3]">
-                      <img
-                        src={
-                          product.image_url || "/img/placeholder-product.png"
-                        }
-                        alt={product.name}
-                        loading="lazy"
-                        decoding="async"
-                        className="absolute inset-0 h-full w-full object-contain p-2 transition-transform duration-200 hover:scale-[1.01]"
-                        onError={(e) => {
-                          e.currentTarget.onerror = null;
-                          e.currentTarget.src = "/img/placeholder-product.png";
-                        }}
-                        srcSet={
-                          product.image_url
-                            ? `${product.image_url} 1x, ${product.image_url} 2x`
-                            : undefined
-                        }
-                      />
-                    </div>
-                  </div>
-
-                  <div className="font-semibold text-sm mb-1 line-clamp-2">
-                    {product.name}
-                  </div>
-                  <div className="text-xs text-gray-500 mb-1">
-                    SKU: {product.sku}
-                  </div>
-                  <div className="font-bold" style={{ color: "#009CDE" }}>
-                    {formatCurrency(product.price)}
-                  </div>
-                  <div className="text-xs text-gray-500 mt-1">
-                    Stok: {product.stock_qty}
-                  </div>
-                </button>
-
-                {isAdmin && (
-                  <div className="mt-2 flex justify-end">
-                    <div className="inline-flex items-center rounded-lg border bg-white/80 px-1 py-1 shadow-sm backdrop-blur">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => openEdit(product)}
-                        className="h-8 px-2 rounded-md border-none hover:bg-gray-100"
-                        title="Edit produk"
-                      >
-                        <Pencil size={14} className="mr-1" />
-                        <span className="hidden sm:inline">Edit</span>
-                      </Button>
-
-                      <div className="mx-1 h-5 w-px bg-gray-200" aria-hidden />
-
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => handleDeleteProduct(product)}
-                        className="h-8 px-2 rounded-md"
-                        title="Hapus produk"
-                      >
-                        <Trash2 size={14} className="mr-1" />
-                        <span className="hidden sm:inline">Hapus</span>
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </Card>
-      </div>
-
-      {/* RIGHT - Cart */}
-      <div className="flex-1 w-full flex flex-col">
-        <Card className="flex-1 overflow-y-auto p-3 md:p-4 mb-3 md:mb-4">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-lg flex items-center gap-2">
-              <ShoppingCart size={20} />
-              Keranjang ({cart.length})
-            </h3>
-            {cart.length > 0 && (
-              <Button variant="outline" size="sm" onClick={() => setCart([])}>
-                Kosongkan
+                <Plus size={16} />
+                Tambah Produk
               </Button>
             )}
           </div>
 
-          {cart.length === 0 ? (
-            <div className="text-center text-gray-500 py-12">
-              <ShoppingCart size={48} className="mx-auto mb-4 text-gray-300" />
-              <p>Keranjang kosong</p>
+          {/* Search Bar */}
+          <Card className="p-3 md:p-4 mb-3 md:mb-4">
+            <div className="relative">
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                size={18}
+              />
+              <Input
+                placeholder="Cari produk (nama, SKU, barcode)..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
             </div>
-          ) : (
-            <div className="space-y-3">
-              {cart.map((item) => (
-                <div key={item.product_id} className="border rounded-lg p-3">
-                  <div className="flex justify-between items-start mb-2">
-                    <div className="flex-1">
-                      <div className="font-semibold">{item.name}</div>
-                      <div className="text-sm text-gray-600">
-                        {formatCurrency(item.price)}
+          </Card>
+
+          {/* Product Grid Card */}
+          <Card className="flex-1 overflow-y-auto p-3 md:p-4">
+            <h3 className="mb-3 font-semibold text-lg md:mb-4">Produk</h3>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
+              {products.map((product) => (
+                <div
+                  key={product.id}
+                  className="p-3 border-2 rounded-lg text-left hover:border-[#009CDE] transition-all"
+                  style={{ borderColor: "#e5e7eb" }}
+                >
+                  <button
+                    onClick={() => addToCart(product)}
+                    className="w-full text-left"
+                  >
+                    <div className="mb-2 overflow-hidden rounded-lg border bg-[#1E9BD5]">
+                      <div className="relative aspect-[4/3]">
+                        <img
+                          src={
+                            product.image_url || "/img/placeholder-product.png"
+                          }
+                          alt={product.name}
+                          loading="lazy"
+                          decoding="async"
+                          className="absolute inset-0 h-full w-full object-contain p-2 transition-transform duration-200 hover:scale-[1.01]"
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src =
+                              "/img/placeholder-product.png";
+                          }}
+                        />
                       </div>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeFromCart(item.product_id)}
-                    >
-                      <Trash2 size={16} className="text-red-500" />
-                    </Button>
-                  </div>
+                    <div className="font-semibold text-sm mb-1 line-clamp-2">
+                      {product.name}
+                    </div>
+                    <div className="text-xs text-gray-500 mb-1">
+                      SKU: {product.sku}
+                    </div>
+                    <div className="font-bold" style={{ color: "#009CDE" }}>
+                      {formatCurrency(product.price)}
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      Stok: {product.stock_qty}
+                    </div>
+                  </button>
 
-                  <div className="flex items-center gap-2 mb-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() =>
-                        updateQuantity(item.product_id, item.qty - 1)
-                      }
-                    >
-                      <Minus size={16} />
-                    </Button>
-                    <Input
-                      type="number"
-                      value={item.qty}
-                      onChange={(e) =>
-                        updateQuantity(
-                          item.product_id,
-                          parseInt(e.target.value) || 1
-                        )
-                      }
-                      className="w-20 text-center"
-                      min="1"
-                    />
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() =>
-                        updateQuantity(item.product_id, item.qty + 1)
-                      }
-                    >
-                      <Plus size={16} />
-                    </Button>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <Label className="text-xs">Diskon (Rp):</Label>
-                    <Input
-                      type="number"
-                      value={item.line_discount_amount}
-                      onChange={(e) =>
-                        updateLineDiscount(item.product_id, e.target.value)
-                      }
-                      className="flex-1"
-                      min="0"
-                      placeholder="0"
-                    />
-                  </div>
-
-                  <div className="flex justify-between items-center mt-2 pt-2 border-t">
-                    <span className="text-sm text-gray-600">Total baris:</span>
-                    <span className="font-bold" style={{ color: "#009CDE" }}>
-                      {formatCurrency(item.line_total)}
-                    </span>
-                  </div>
+                  {isAdmin && (
+                    <div className="mt-2 flex justify-end">
+                      <div className="inline-flex items-center rounded-lg border bg-white/80 px-1 py-1 shadow-sm backdrop-blur">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => openEdit(product)}
+                          className="h-8 px-2 rounded-md border-none hover:bg-gray-100"
+                          title="Edit produk"
+                        >
+                          <Pencil size={14} className="mr-1" />
+                          <span className="hidden sm:inline">Edit</span>
+                        </Button>
+                        <div
+                          className="mx-1 h-5 w-px bg-gray-200"
+                          aria-hidden
+                        />
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => handleDeleteProduct(product)}
+                          className="h-8 px-2 rounded-md"
+                          title="Hapus produk"
+                        >
+                          <Trash2 size={14} className="mr-1" />
+                          <span className="hidden sm:inline">Hapus</span>
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
-          )}
-        </Card>
+          </Card>
+        </div>
 
-        {/* Summary */}
-        <Card className="p-3 md:p-4">
-          <div className="space-y-3 mb-4">
-            <div className="flex justify-between">
-              <span>Subtotal:</span>
-              <span className="font-semibold">
-                {formatCurrency(subtotal())}
-              </span>
+        {/* RIGHT - Cart (Conditional View) */}
+        <div
+          className={`w-full flex-1 flex-col lg:flex ${
+            mobileView === "cart" ? "flex" : "hidden"
+          }`}
+        >
+          {/* Cart Items Card */}
+          <Card className="flex-1 overflow-y-auto p-3 md:p-4 mb-3 md:mb-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold text-lg flex items-center gap-2">
+                <ShoppingCart size={20} />
+                Keranjang ({cart.length})
+              </h3>
+              {cart.length > 0 && (
+                <Button variant="outline" size="sm" onClick={() => setCart([])}>
+                  Kosongkan
+                </Button>
+              )}
             </div>
-            <div className="flex items-center gap-2">
-              <Label>Diskon Total (Rp):</Label>
-              <Input
-                type="number"
-                value={discountAmount}
-                onChange={(e) =>
-                  setDiscountAmount(parseInt(e.target.value) || 0)
-                }
-                className="w-32"
-                min="0"
-                placeholder="0"
-              />
-            </div>
-            <div className="flex justify-between text-xl font-bold pt-2 border-t">
-              <span>TOTAL:</span>
-              <span style={{ color: "#009CDE" }}>
-                {formatCurrency(grandTotal())}
-              </span>
-            </div>
-          </div>
 
-          <Button
-            className="w-full text-white font-semibold py-4 md:py-6 text-base md:text-lg"
-            style={{ background: "#009CDE" }}
-            onClick={handlePayment}
-            disabled={cart.length === 0}
-          >
-            Bayar Sekarang
-          </Button>
-        </Card>
+            {cart.length === 0 ? (
+              <div className="text-center text-gray-500 py-12">
+                <ShoppingCart
+                  size={48}
+                  className="mx-auto mb-4 text-gray-300"
+                />
+                <p>Keranjang kosong</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {cart.map((item) => (
+                  <div key={item.product_id} className="border rounded-lg p-3">
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="flex-1">
+                        <div className="font-semibold">{item.name}</div>
+                        <div className="text-sm text-gray-600">
+                          {formatCurrency(item.price)}
+                        </div>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeFromCart(item.product_id)}
+                      >
+                        <Trash2 size={16} className="text-red-500" />
+                      </Button>
+                    </div>
+
+                    <div className="flex items-center gap-2 mb-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          updateQuantity(item.product_id, item.qty - 1)
+                        }
+                      >
+                        <Minus size={16} />
+                      </Button>
+                      <Input
+                        type="number"
+                        value={item.qty}
+                        onChange={(e) =>
+                          updateQuantity(
+                            item.product_id,
+                            parseInt(e.target.value) || 1
+                          )
+                        }
+                        className="w-20 text-center"
+                        min="1"
+                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          updateQuantity(item.product_id, item.qty + 1)
+                        }
+                      >
+                        <Plus size={16} />
+                      </Button>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <Label className="text-xs">Diskon (Rp):</Label>
+                      <Input
+                        type="number"
+                        value={item.line_discount_amount}
+                        onChange={(e) =>
+                          updateLineDiscount(item.product_id, e.target.value)
+                        }
+                        className="flex-1"
+                        min="0"
+                        placeholder="0"
+                      />
+                    </div>
+
+                    <div className="flex justify-between items-center mt-2 pt-2 border-t">
+                      <span className="text-sm text-gray-600">
+                        Total baris:
+                      </span>
+                      <span className="font-bold" style={{ color: "#009CDE" }}>
+                        {formatCurrency(item.line_total)}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </Card>
+
+          {/* Summary */}
+          <Card className="p-3 md:p-4">
+            <div className="space-y-3 mb-4">
+              <div className="flex justify-between">
+                <span>Subtotal:</span>
+                <span className="font-semibold">
+                  {formatCurrency(subtotal())}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Label>Diskon Total (Rp):</Label>
+                <Input
+                  type="number"
+                  value={discountAmount}
+                  onChange={(e) =>
+                    setDiscountAmount(parseInt(e.target.value) || 0)
+                  }
+                  className="w-32"
+                  min="0"
+                  placeholder="0"
+                />
+              </div>
+              <div className="flex justify-between text-xl font-bold pt-2 border-t">
+                <span>TOTAL:</span>
+                <span style={{ color: "#009CDE" }}>
+                  {formatCurrency(grandTotal())}
+                </span>
+              </div>
+            </div>
+
+            <Button
+              className="w-full text-white font-semibold py-4 md:py-6 text-base md:text-lg"
+              style={{ background: "#009CDE" }}
+              onClick={handlePayment}
+              disabled={cart.length === 0}
+            >
+              Bayar Sekarang
+            </Button>
+          </Card>
+        </div>
       </div>
 
-      {/* Payment Dialog */}
+      {/* Navigasi Bawah untuk Mobile & Tablet */}
+      <div className="fixed bottom-0 left-0 z-10 grid w-full grid-cols-2 gap-2 border-t bg-white/80 p-2 backdrop-blur-sm lg:hidden">
+        <Button
+          onClick={() => setMobileView("products")}
+          variant={mobileView === "products" ? "default" : "outline"}
+          className="flex h-12 items-center justify-center gap-2 text-base"
+          style={
+            mobileView === "products"
+              ? { background: "#009CDE", color: "white" }
+              : {}
+          }
+        >
+          <List size={20} />
+          Katalog
+        </Button>
+        <Button
+          onClick={() => setMobileView("cart")}
+          variant={mobileView === "cart" ? "default" : "outline"}
+          className="relative flex h-12 items-center justify-center gap-2 text-base"
+          style={
+            mobileView === "cart"
+              ? { background: "#009CDE", color: "white" }
+              : {}
+          }
+        >
+          <ShoppingCart size={20} />
+          Keranjang
+          {cart.length > 0 && (
+            <Badge className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 p-1 text-xs text-white">
+              {cart.length}
+            </Badge>
+          )}
+        </Button>
+      </div>
+
+      {/* DIALOGS */}
       <Dialog open={showPaymentDialog} onOpenChange={setShowPaymentDialog}>
-        {/* -> Lebarkan + padding nyaman */}
         <DialogContent className="w-[92vw] max-w-[560px] p-6">
           <DialogHeader>
             <DialogTitle className="text-lg">Metode Pembayaran</DialogTitle>
           </DialogHeader>
 
-          {/* Segmented tabs: selalu terbaca */}
           <div
             role="tablist"
             aria-label="payment-method"
@@ -578,27 +625,26 @@ function POSPage() {
               aria-selected={paymentMethod === "qris"}
               onClick={() => setPaymentMethod("qris")}
               className={`h-11 w-full rounded-lg text-sm sm:text-base font-semibold flex items-center justify-center
-          ${
-            paymentMethod === "qris"
-              ? "bg-[#009CDE] text-white hover:bg-[#008ac4]"
-              : "bg-white text-gray-800 border border-gray-300 hover:bg-gray-50"
-          }`}
+       ${
+         paymentMethod === "qris"
+           ? "bg-[#009CDE] text-white hover:bg-[#008ac4]"
+           : "bg-white text-gray-800 border border-gray-300 hover:bg-gray-50"
+       }`}
             >
               <QrCode className="mr-2 h-5 w-5" />
               QRIS
             </Button>
-
             <Button
               type="button"
               role="tab"
               aria-selected={paymentMethod === "edc_debit"}
               onClick={() => setPaymentMethod("edc_debit")}
               className={`h-11 w-full rounded-lg text-sm sm:text-base font-semibold flex items-center justify-center
-          ${
-            paymentMethod === "edc_debit"
-              ? "bg-[#009CDE] text-white hover:bg-[#008ac4]"
-              : "bg-white text-gray-800 border border-gray-300 hover:bg-gray-50"
-          }`}
+       ${
+         paymentMethod === "edc_debit"
+           ? "bg-[#009CDE] text-white hover:bg-[#008ac4]"
+           : "bg-white text-gray-800 border border-gray-300 hover:bg-gray-50"
+       }`}
             >
               <CreditCard className="mr-2 h-5 w-5" />
               Debit EDC
@@ -645,7 +691,6 @@ function POSPage() {
             </div>
           )}
 
-          {/* Ringkasan total lebih kontras */}
           <div className="bg-gray-50 border border-gray-200 p-4 rounded-lg mt-4">
             <div className="flex justify-between items-center">
               <span className="text-gray-600">Total Pembayaran:</span>
@@ -654,7 +699,6 @@ function POSPage() {
               </span>
             </div>
           </div>
-
           <Button
             className="mt-4 w-full text-white font-semibold h-11"
             style={{ background: "#009CDE" }}
@@ -666,7 +710,6 @@ function POSPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Invoice Dialog */}
       <Dialog open={showInvoice} onOpenChange={setShowInvoice}>
         <DialogContent className="max-w-md w-[95vw]">
           {currentSale && (
@@ -790,7 +833,6 @@ function POSPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Create Product (Admin) */}
       <Dialog open={showCreateProduct} onOpenChange={setShowCreateProduct}>
         <DialogContent className="max-w-lg w-[95vw]">
           <DialogHeader>
@@ -899,7 +941,6 @@ function POSPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Edit Product (Admin) */}
       <Dialog open={showEditProduct} onOpenChange={setShowEditProduct}>
         <DialogContent className="max-w-lg w-[95vw]">
           <DialogHeader>

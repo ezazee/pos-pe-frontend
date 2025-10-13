@@ -14,6 +14,7 @@ import FinancePage from "./pages/FinancePage";
 import Layout from "./components/Layout";
 import { Toaster } from "./components/ui/sonner";
 import "./App.css";
+import { LayoutProvider } from "./contexts/LayoutContext";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
@@ -70,37 +71,39 @@ function App() {
   return (
     <AuthContext.Provider value={{ user, token, login, logout }}>
       <BrowserRouter>
-        <Routes>
-          <Route
-            path="/login"
-            element={!token ? <LoginPage /> : <Navigate to="/" />}
-          />
-          <Route
-            path="/*"
-            element={
-              token ? (
-                <Layout>
-                  <Routes>
-                    <Route
-                      path="/"
-                      element={
-                        user?.role === "admin" || user?.role === "cashier" ? (
-                          <POSPage />
-                        ) : (
-                          <Navigate to="/history" />
-                        )
-                      }
-                    />
-                    <Route path="/history" element={<HistoryPage />} />
-                    <Route path="/finance" element={<FinancePage />} />
-                  </Routes>
-                </Layout>
-              ) : (
-                <Navigate to="/login" />
-              )
-            }
-          />
-        </Routes>
+        <LayoutProvider>
+          <Routes>
+            <Route
+              path="/login"
+              element={!token ? <LoginPage /> : <Navigate to="/" />}
+            />
+            <Route
+              path="/*"
+              element={
+                token ? (
+                  <Layout>
+                    <Routes>
+                      <Route
+                        path="/"
+                        element={
+                          user?.role === "admin" || user?.role === "cashier" ? (
+                            <POSPage />
+                          ) : (
+                            <Navigate to="/history" />
+                          )
+                        }
+                      />
+                      <Route path="/history" element={<HistoryPage />} />
+                      <Route path="/finance" element={<FinancePage />} />
+                    </Routes>
+                  </Layout>
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
+            />
+          </Routes>
+        </LayoutProvider>
       </BrowserRouter>
       <Toaster position="top-right" />
     </AuthContext.Provider>
