@@ -324,24 +324,7 @@ function POSPage() {
     }
   }
 
-  const printInvoice = () => {
-    const printContents = document.getElementById("invoice-to-print")?.innerHTML;
-    if (!printContents) {
-      toast.error("Gagal menemukan konten invoice untuk dicetak.");
-      return;
-    }
-
-    const originalContents = document.body.innerHTML;
-    document.body.innerHTML = `<style>@media print { body { -webkit-print-color-adjust: exact; } }</style>${printContents}`;
-
-    // Beri jeda 300 milidetik agar browser sempat me-render gambar dan layout
-    setTimeout(() => {
-      window.print();
-      document.body.innerHTML = originalContents;
-      // Reload untuk memastikan semua state dan event listener React kembali normal
-      window.location.reload(); 
-    }, 500);
-  };
+const printInvoice = () => window.print();
 
   // ======================= UI =======================
   return (
