@@ -338,17 +338,17 @@ function HistoryPage() {
 
                   {/* Detail Transaksi */}
                   <div className="grid grid-cols-[max-content,1fr] gap-x-2 text-xs">
-                    <div>Invoice Number</div>
+                    <div>Invoice Number:</div>
                     <div className="text-right font-semibold">
-                      : {selectedSale.invoice_no}
+                       {selectedSale.invoice_no}
                     </div>
-                    <div>Customer Name</div>
+                    <div>Customer Name:</div>
                     <div className="text-right">
-                      : {selectedSale.customer_name}
+                       {selectedSale.customer_name}
                     </div>
-                    <div>Payment Method</div>
+                    <div>Payment Method:</div>
                     <div className="text-right">
-                      :{" "}
+                      {" "}
                       {selectedSale.payment_method.toLowerCase() === "qris"
                         ? "QRIS"
                         : "Bank Transfer"}
@@ -383,33 +383,27 @@ function HistoryPage() {
                   </table>
                   <div className="border-b border-black border-dashed my-1"></div>
                   <table className="w-full text-left text-xs">
-                    <tbody>
-                      {selectedSale.items.map((item, idx) => (
-                        <tr
-                          key={idx}
-                          className="align-top border-b border-dashed"
-                        >
-                          <td className="py-2 w-[15%]">{item.sku}</td>
-                          <td className="py-2 w-[45%] pr-2">
-                            <div>{item.name}</div>
-                            <div className="text-gray-600 text-[10px]">
-                              {item.qty} pcs x {formatCurrencyOnly(item.price)}
-                            </div>
-                          </td>
-                          <td className="py-2 text-center w-[15%]">
-                            {item.original_price &&
-                              item.original_price > item.price && (
-                                <div className="line-through text-gray-500">
-                                  {formatCurrencyOnly(item.original_price)}
-                                </div>
-                              )}
-                          </td>
-                          <td className="py-2 text-right w-[25%] font-semibold">
-                            {formatCurrencyOnly(item.line_total)}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
+<tbody>
+  {selectedSale.items.map((item, idx) => (
+    <tr key={idx}>
+      <td className="w-[15%]">{item.sku}</td>
+      <td className="w-[45%]">
+        {item.name}
+        {/* ✅ Tampilkan harga asli jika ada diskon */}
+        {item.original_price && item.original_price > item.price && (
+          <div className="text-gray-500 line-through">
+            {formatCurrency(item.original_price)}
+          </div>
+        )}
+      </td>
+      <td className="text-center w-[15%]">{item.qty} pcs</td>
+      <td className="text-right w-[25%]">
+        {formatCurrency(item.line_total)}
+      </td>
+    </tr>
+  ))}
+</tbody>
+
                   </table>
 
                   {/* Total */}
