@@ -334,12 +334,13 @@ function POSPage() {
     const originalContents = document.body.innerHTML;
     document.body.innerHTML = `<style>@media print { body { -webkit-print-color-adjust: exact; } }</style>${printContents}`;
 
-    // Beri jeda 100 milidetik agar browser sempat me-render gambar dan layout
+    // Beri jeda 300 milidetik agar browser sempat me-render gambar dan layout
     setTimeout(() => {
       window.print();
       document.body.innerHTML = originalContents;
-      window.location.reload(); // Wajib direload karena manipulasi DOM merusak React
-    }, 100);
+      // Reload untuk memastikan semua state dan event listener React kembali normal
+      window.location.reload(); 
+    }, 500);
   };
 
   // ======================= UI =======================
