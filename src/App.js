@@ -105,7 +105,7 @@ function App() {
           </Routes>
         </LayoutProvider>
       </BrowserRouter>
-      <Toaster position="top-right" />
+      {/* <Toaster position="top-right" /> */}
     </AuthContext.Provider>
   );
 }
