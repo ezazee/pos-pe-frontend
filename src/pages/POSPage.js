@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { AuthContext, API } from "../App"; // Pastikan path ini sesuai
+import { AuthContext, API } from "../App";
 import axios from "axios";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -23,9 +23,32 @@ import {
   QrCode,
   Image as ImageIcon,
   Pencil,
-  X,
+  User,
   List,
+  Globe,
 } from "lucide-react";
+
+const InstagramIcon = ({ className }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className={className}
+  >
+    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.689-.073-4.948-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.79 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44 1.441-.645 1.441-1.44-.645-1.44-1.441-1.44z"></path>
+  </svg>
+);
+
+const TikTokIcon = ({ className }) => (
+  <svg
+    className={className}
+    fill="currentColor"
+    viewBox="0 0 512 512"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M412.19,118.66a109.27,109.27,0,0,1-9.45-5.5,132.87,132.87,0,0,1-24.27-20.62c-18.1-20.71-24.86-41.72-27.35-56.43h.1C349.14,23.9,350,16,350.13,16H267.69V334.78c0,4.28,0,8.51-.18,12.69,0,.52-.05,1-.08,1.56,0,.23,0,.47-.05.71,0,.06,0,.12,0,.18a70,70,0,0,1-35.22,55.56,68.8,68.8,0,0,1-34.11,9c-38.41,0-69.54-31.32-69.54-70s31.13-70,69.54-70a68.9,68.9,0,0,1,21.41,3.39l.1-83.94a153.14,153.14,0,0,0-118,34.52,161.79,161.79,0,0,0-35.3,43.53c-3.48,6-16.61,30.11-18.2,69.24-1,22.21,5.67,45.22,8.85,54.73v.2c2,5.6,9.75,24.71,22.38,40.82A167.53,167.53,0,0,0,115,470.66v-.2l.2.2C155.11,497.78,199.36,496,199.36,496c7.66-.31,33.32,0,62.46-13.81,32.32-15.31,50.72-38.12,50.72-38.12a158.46,158.46,0,0,0,27.64-45.93c7.46-19.61,9.95-43.13,9.95-52.53V176.49c1,.6,14.32,9.41,14.32,9.41s19.19,12.3,49.13,20.31c21.48,5.7,50.42,6.9,50.42,6.9V131.27C453.86,132.37,433.27,129.17,412.19,118.66Z" />
+  </svg>
+);
 
 function POSPage() {
   const { user, token } = useContext(AuthContext);
@@ -34,10 +57,12 @@ function POSPage() {
   // products / search
   const [products, setProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [customerName, setCustomerName] = useState("");
 
   // cart
   const [cart, setCart] = useState([]);
-  const [discountAmount, setDiscountAmount] = useState(0);
+ const [discountInput, setDiscountInput] = useState("0"); 
+  
 
   // payment
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
@@ -96,6 +121,7 @@ function POSPage() {
 
   // ===== Helpers =====
   const formatCurrency = (n) => `Rp ${Number(n || 0).toLocaleString("id-ID")}`;
+  const formatCurrencyOnly = (n) => Number(n || 0).toLocaleString("id-ID");
   const addToCart = (product) => {
     const ex = cart.find((i) => i.product_id === product.id);
     if (ex) updateQuantity(product.id, ex.qty + 1);
@@ -104,6 +130,7 @@ function POSPage() {
         ...prev,
         {
           product_id: product.id,
+          sku: product.sku,
           name: product.name,
           price: product.price,
           qty: 1,
@@ -139,12 +166,13 @@ function POSPage() {
   };
   const removeFromCart = (pid) =>
     setCart(cart.filter((i) => i.product_id !== pid));
-  const subtotal = () => cart.reduce((s, i) => s + i.line_total, 0);
-  const grandTotal = () => {
-    const sub = subtotal();
-    const after = sub - discountAmount;
-    const r = after % 100;
-    return r >= 50 ? after + (100 - r) : after - r;
+  const discountAmount = parseInt(discountInput) || 0;
+  const subtotal = () => cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const grandTotal = () => subtotal() - discountAmount;
+
+  const applyDiscountPercentage = (percentage) => {
+    const discountValue = Math.round((subtotal() * percentage) / 100);
+    setDiscountInput(String(discountValue));
   };
 
   // ===== Create product =====
@@ -258,6 +286,7 @@ function POSPage() {
       return toast.error("Diskon tidak boleh melebihi subtotal");
     setShowPaymentDialog(true);
   };
+
   async function confirmPayment() {
     setLoading(true);
     try {
@@ -265,6 +294,7 @@ function POSPage() {
         items: cart,
         discount_amount: discountAmount,
         payment_method: paymentMethod,
+        customer_name: customerName || "-",
       };
       if (paymentMethod === "qris") {
         payload.qris_acquirer = qrisAcquirer;
@@ -283,6 +313,7 @@ function POSPage() {
       setShowInvoice(true);
       setCart([]);
       setDiscountAmount(0);
+      setCustomerName("");
       setQrisAcquirer("");
       setQrisRrn("");
       setEdcIssuer("");
@@ -294,7 +325,14 @@ function POSPage() {
     }
   }
 
-  const printInvoice = () => window.print();
+  const printInvoice = () => {
+    const printContents = document.getElementById("invoice-to-print").innerHTML;
+    const originalContents = document.body.innerHTML;
+    document.body.innerHTML = `<style>@media print { body { -webkit-print-color-adjust: exact; } }</style>${printContents}`;
+    window.print();
+    document.body.innerHTML = originalContents;
+    window.location.reload();
+  };
 
   // ======================= UI =======================
   return (
@@ -377,8 +415,23 @@ function POSPage() {
                     <div className="text-xs text-gray-500 mb-1">
                       SKU: {product.sku}
                     </div>
-                    <div className="font-bold" style={{ color: "#009CDE" }}>
-                      {formatCurrency(product.price)}
+                    <div
+                      className="font-bold items-baseline"
+                      style={{ color: "#009CDE" }}
+                    >
+                      {/* Logika untuk menampilkan harga coret jika ada */}
+                      {product.original_price &&
+                      product.original_price > product.price ? (
+                        <>
+                          <span>{formatCurrency(product.price)}</span>
+                          <br />
+                          <span className="text-sm font-normal text-gray-500 line-through mr-2">
+                            {formatCurrency(product.original_price)}
+                          </span>
+                        </>
+                      ) : (
+                        <span>{formatCurrency(product.price)}</span>
+                      )}
                     </div>
                     <div className="text-xs text-gray-500 mt-1">
                       Stok: {product.stock_qty}
@@ -427,7 +480,6 @@ function POSPage() {
             mobileView === "cart" ? "flex" : "hidden"
           }`}
         >
-          {/* Cart Items Card */}
           <Card className="flex-1 overflow-y-auto p-3 md:p-4 mb-3 md:mb-4">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold text-lg flex items-center gap-2">
@@ -462,67 +514,53 @@ function POSPage() {
                       </div>
                       <Button
                         variant="ghost"
-                        size="sm"
+                        size="icon"
+                        className="h-8 w-8"
                         onClick={() => removeFromCart(item.product_id)}
                       >
                         <Trash2 size={16} className="text-red-500" />
                       </Button>
                     </div>
 
-                    <div className="flex items-center gap-2 mb-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() =>
-                          updateQuantity(item.product_id, item.qty - 1)
-                        }
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            updateQuantity(item.product_id, item.qty - 1)
+                          }
+                        >
+                          <Minus size={16} />
+                        </Button>
+                        <Input
+                          type="number"
+                          value={item.qty}
+                          onChange={(e) =>
+                            updateQuantity(
+                              item.product_id,
+                              parseInt(e.target.value) || 1
+                            )
+                          }
+                          className="w-16 text-center"
+                          min="1"
+                        />
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            updateQuantity(item.product_id, item.qty + 1)
+                          }
+                        >
+                          <Plus size={16} />
+                        </Button>
+                      </div>
+                      <div
+                        className="font-bold text-right"
+                        style={{ color: "#009CDE" }}
                       >
-                        <Minus size={16} />
-                      </Button>
-                      <Input
-                        type="number"
-                        value={item.qty}
-                        onChange={(e) =>
-                          updateQuantity(
-                            item.product_id,
-                            parseInt(e.target.value) || 1
-                          )
-                        }
-                        className="w-20 text-center"
-                        min="1"
-                      />
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() =>
-                          updateQuantity(item.product_id, item.qty + 1)
-                        }
-                      >
-                        <Plus size={16} />
-                      </Button>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <Label className="text-xs">Diskon (Rp):</Label>
-                      <Input
-                        type="number"
-                        value={item.line_discount_amount}
-                        onChange={(e) =>
-                          updateLineDiscount(item.product_id, e.target.value)
-                        }
-                        className="flex-1"
-                        min="0"
-                        placeholder="0"
-                      />
-                    </div>
-
-                    <div className="flex justify-between items-center mt-2 pt-2 border-t">
-                      <span className="text-sm text-gray-600">
-                        Total baris:
-                      </span>
-                      <span className="font-bold" style={{ color: "#009CDE" }}>
-                        {formatCurrency(item.line_total)}
-                      </span>
+                        {formatCurrency(item.price * item.qty)}
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -530,7 +568,7 @@ function POSPage() {
             )}
           </Card>
 
-          {/* Summary */}
+          {/* Ringkasan Pembayaran */}
           <Card className="p-3 md:p-4">
             <div className="space-y-3 mb-4">
               <div className="flex justify-between">
@@ -539,19 +577,59 @@ function POSPage() {
                   {formatCurrency(subtotal())}
                 </span>
               </div>
-              <div className="flex items-center gap-2">
+
+              {/* Input Diskon Total */}
+              <div className="flex items-center justify-between">
                 <Label>Diskon Total (Rp):</Label>
                 <Input
-                  type="number"
-                  value={discountAmount}
-                  onChange={(e) =>
-                    setDiscountAmount(parseInt(e.target.value) || 0)
-                  }
-                  className="w-32"
-                  min="0"
+                  type="text"
+                  inputMode="numeric"
+                  value={discountInput}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (/^\d*$/.test(value)) { // Hanya izinkan angka
+                      setDiscountInput(value);
+                    }
+                  }}
+                  className="w-32 text-right"
                   placeholder="0"
                 />
               </div>
+
+              {/* ✅ TAMBAHKAN BLOK TOMBOL INI */}
+              <div className="flex flex-wrap gap-2 pt-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => applyDiscountPercentage(5)}
+                >
+                  5%
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => applyDiscountPercentage(10)}
+                >
+                  10%
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => applyDiscountPercentage(15)}
+                >
+                  15%
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => applyDiscountPercentage(20)}
+                >
+                  20%
+                </Button>
+                <Button size="sm" variant="destructive" onClick={() => setDiscountInput("0")}>Reset</Button>
+              </div>
+              {/* AKHIR BLOK TOMBOL */}
+
               <div className="flex justify-between text-xl font-bold pt-2 border-t">
                 <span>TOTAL:</span>
                 <span style={{ color: "#009CDE" }}>
@@ -561,7 +639,7 @@ function POSPage() {
             </div>
 
             <Button
-              className="w-full text-white font-semibold py-4 md:py-6 text-base md:text-lg"
+              className="w-full text-white font-semibold py-6 text-lg"
               style={{ background: "#009CDE" }}
               onClick={handlePayment}
               disabled={cart.length === 0}
@@ -613,7 +691,6 @@ function POSPage() {
           <DialogHeader>
             <DialogTitle className="text-lg">Metode Pembayaran</DialogTitle>
           </DialogHeader>
-
           <div
             role="tablist"
             aria-label="payment-method"
@@ -654,38 +731,49 @@ function POSPage() {
           {paymentMethod === "qris" ? (
             <div className="space-y-3">
               <div>
-                <Label>Acquirer (Bank)</Label>
-                <Input
-                  value={qrisAcquirer}
-                  onChange={(e) => setQrisAcquirer(e.target.value)}
-                  placeholder="Contoh: GoPay, OVO"
-                />
-              </div>
-              <div>
-                <Label>RRN (Reference Number)</Label>
-                <Input
-                  value={qrisRrn}
-                  onChange={(e) => setQrisRrn(e.target.value)}
-                  placeholder="123456789012"
-                />
+                <div className="relative mb-4">
+                  <Label className="text-sm font-medium mb-1 block">
+                    Nama Pelanggan
+                  </Label>
+                  <div className="relative">
+                    <User
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                      size={16}
+                    />
+                    <Input
+                      placeholder="Masukkan Nama Pelanggan"
+                      value={customerName}
+                      onChange={(e) => setCustomerName(e.target.value)}
+                      className="pl-9"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label>Nama Bank</Label> {/* ✅ Diubah */}
+                  <Input
+                    value={qrisAcquirer}
+                    onChange={(e) => setQrisAcquirer(e.target.value)}
+                    placeholder="Contoh: GoPay, OVO"
+                  />
+                </div>
               </div>
             </div>
           ) : (
             <div className="space-y-3">
-              <div>
-                <Label>Bank Penerbit</Label>
-                <Input
-                  value={edcIssuer}
-                  onChange={(e) => setEdcIssuer(e.target.value)}
-                  placeholder="Contoh: BCA, Mandiri"
+              <Label className="text-sm font-medium mb-1 block">
+                Nama Pelanggan
+              </Label>
+              <div className="relative">
+                <User
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  size={16}
                 />
-              </div>
-              <div>
-                <Label>Approval Code</Label>
                 <Input
-                  value={edcApprovalCode}
-                  onChange={(e) => setEdcApprovalCode(e.target.value)}
-                  placeholder="ABC123"
+                  placeholder="Masukkan Nama Pelanggan"
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
+                  className="pl-9"
                 />
               </div>
             </div>
@@ -710,116 +798,173 @@ function POSPage() {
         </DialogContent>
       </Dialog>
 
+      {/* ================================== */}
+      {/* ===== DIALOG INVOICE BARU ====== */}
+      {/* ================================== */}
       <Dialog open={showInvoice} onOpenChange={setShowInvoice}>
-        <DialogContent className="max-w-md w-[95vw]">
+        <DialogContent className="max-w-sm w-[95vw] p-0 font-sans">
           {currentSale && (
-            <div className="text-[12px] leading-tight">
-              {/* Header */}
-              <div className="text-center mb-3 pb-3 border-b border-dashed">
-                <div
-                  className="inline-block px-4 py-1.5 rounded mb-2"
-                  style={{ background: "#009CDE" }}
-                >
-                  <div className="text-white font-bold text-base">
-                    PE Skinpro
-                  </div>
-                </div>
-                <div className="text-xs text-gray-600">
-                  Jakarta · Tel: (021) 123-4567
-                </div>
-              </div>
-
+            <>
               <div
-                className="text-center font-bold mb-3"
-                style={{ color: "#009CDE" }}
+                id="invoice-to-print"
+                className="p-6 text-[11px] leading-normal"
               >
-                INVOICE
-              </div>
-
-              {/* meta */}
-              <div className="grid grid-cols-2 gap-2 text-xs mb-3">
-                <div className="space-y-1">
-                  <div className="flex justify-between">
-                    <span>No. Invoice</span>
-                    <span className="font-semibold">
-                      {currentSale.invoice_no}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Tanggal</span>
-                    <span>
-                      {currentSale.date} {currentSale.time}
-                    </span>
-                  </div>
+                {/* Header Invoice */}
+                <div className="text-center mb-4">
+                  <img
+                    src="/img/logo.png"
+                    alt="PE SKINPRO"
+                    className="h-14 mx-auto mb-2"
+                  />
+                  <p className="font-bold text-base">PE SKINPRO ID</p>
+                  <p>PT Kilau Berlian Nusantara</p>
+                  <p>{currentSale.invoice_no}</p>
+                  <p className="mt-2">
+                    Royal Spring Residence. Block Titanium No. 05, 006/008, Jati
+                    Padang, Ps. Minggu, Jakarta Selatan
+                  </p>
+                  <p>
+                    Jl. Dukuh Patra No.75 001/013, Menteng Dalam, Tebet, Jakarta
+                    Selatan
+                  </p>
+                  <p className="mt-2">0812-1234-5678</p>
+                  <p>adm.peskinproid@gmail.com</p>
+                  <p className="mt-2 text-gray-700">
+                    {new Date(currentSale.created_at)
+                      .toLocaleString("en-US", {
+                        weekday: "short",
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                      })
+                      .replace(",", " •")}
+                  </p>
                 </div>
-                <div className="space-y-1">
-                  <div className="flex justify-between">
-                    <span>Kasir</span>
-                    <span>{currentSale.cashier_name}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Metode</span>
-                    <Badge
-                      style={{ background: "#009CDE" }}
-                      className="text-white"
-                    >
-                      {currentSale.payment_method === "qris"
-                        ? "QRIS"
-                        : "Debit EDC"}
-                    </Badge>
-                  </div>
-                </div>
-              </div>
 
-              {/* items */}
-              <div className="border-t border-dashed pt-2 mb-2">
-                <table className="w-full text-xs">
+                {/* Detail Transaksi */}
+                <div className="grid grid-cols-[max-content,1fr] gap-x-2 text-xs">
+                  <div>Invoice Number :</div>
+                  <div className="text-right font-semibold">
+                    {currentSale.invoice_no}
+                  </div>
+
+                  <div>Customer Name :</div>
+                  <div className="text-right">{currentSale.customer_name}</div>
+
+                  <div>Payment Method :</div>
+                  <div className="text-right">
+                    {" "}
+                    {currentSale.payment_method.toLowerCase() === "qris"
+                      ? "QRIS"
+                      : "Bank Transfer"}
+                  </div>
+
+                  {/* Logika Kondisional untuk Menampilkan Nama Bank */}
+                  {currentSale.payment_method === "qris" &&
+                    currentSale.qris_acquirer && (
+                      <>
+                        <div>Nama Bank :</div>
+                        <div className="text-right">
+                          {currentSale.qris_acquirer}
+                        </div>
+                      </>
+                    )}
+                </div>
+
+                <div className="border-b border-black border-dashed my-2"></div>
+
+                {/* Tabel Item Produk */}
+                <table className="w-full text-left text-xs">
                   <thead>
-                    <tr className="text-gray-600">
-                      <th className="text-left">Item</th>
-                      <th className="text-center w-[18%]">Qty</th>
-                      <th className="text-right w-[30%]">Total</th>
+                    <tr>
+                      <th className="font-semibold w-[15%]">SKU</th>
+                      <th className="font-semibold w-[45%]">Product</th>
+                      <th className="font-semibold text-center w-[15%]">Qty</th>
+                      <th className="font-semibold text-right w-[25%]">
+                        Price
+                      </th>
                     </tr>
                   </thead>
+                </table>
+                <div className="border-b border-black border-dashed my-1"></div>
+                <table className="w-full text-left text-xs">
                   <tbody>
-                    {currentSale.items.map((it, idx) => (
-                      <tr key={idx} className="align-top">
-                        <td className="py-1 pr-2">{it.name}</td>
-                        <td className="text-center">{it.qty}</td>
-                        <td className="text-right">
-                          {formatCurrency(it.line_total)}
+                    {currentSale.items.map((item, idx) => (
+                      <tr key={idx}>
+                        <td className="w-[15%]">{item.sku}</td>
+                        <td className="w-[45%]">
+                          {item.name}
+                          {/* ✅ Tampilkan harga asli jika ada diskon */}
+                          {item.original_price &&
+                            item.original_price > item.price && (
+                              <div className="text-gray-500 line-through">
+                                {formatCurrency(item.original_price)}
+                              </div>
+                            )}
+                        </td>
+                        <td className="text-center w-[15%]">{item.qty} pcs</td>
+                        <td className="text-right w-[25%]">
+                          {formatCurrency(item.line_total)}
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
+
+                <div className="border-b border-black border-dashed my-2"></div>
+
+                {/* Ringkasan Total */}
+                <div className="text-xs space-y-1">
+                  <div className="flex justify-between">
+                    <span>Subtotal:</span>
+                    <span>{formatCurrency(currentSale.subtotal)}</span>
+                  </div>
+                  {currentSale.discount_amount > 0 && (
+                    <div className="flex justify-between">
+                      <span>Discount:</span>
+                      <span>
+                        -{formatCurrency(currentSale.discount_amount)}
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex justify-between font-bold">
+                    <span>Amount Due:</span>
+                    <span>{formatCurrency(currentSale.total)}</span>
+                  </div>
+                </div>
+
+                <div className="border-b border-black border-dashed my-2"></div>
+
+                {/* Footer Invoice */}
+                <div className="text-center mt-4 text-xs">
+                  <p>Thank You For Your Purchase!</p>
+                  <p className="mt-1">Follow Us To See More Update</p>
+
+                  <div className="flex flex-col items-center gap-1 mt-2">
+                    {/* Instagram */}
+                    <div className="flex items-center gap-2">
+                      <InstagramIcon className="h-4 w-4" />{" "}
+                      {/* USE THE NEW ICON */}
+                      <span>peskinpro.id</span>
+                    </div>
+                    {/* TikTok */}
+                    <div className="flex items-center gap-2">
+                      <TikTokIcon className="h-4 w-4" />
+                      <span>@peskinproid</span>
+                    </div>
+                    {/* Website */}
+                    <div className="flex items-center gap-2">
+                      <Globe className="h-4 w-4" />
+                      <span>www.peskinpro.id</span>
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              {/* totals */}
-              <div className="border-t border-dashed pt-2 text-xs space-y-1">
-                <div className="flex justify-between">
-                  <span>Subtotal</span>
-                  <span>{formatCurrency(currentSale.subtotal)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Diskon</span>
-                  <span>- {formatCurrency(currentSale.discount_amount)}</span>
-                </div>
-                <div className="flex justify-between font-bold text-base pt-2 mt-1 border-t border-dashed">
-                  <span>Grand Total</span>
-                  <span style={{ color: "#009CDE" }}>
-                    {formatCurrency(currentSale.total)}
-                  </span>
-                </div>
-              </div>
-
-              <div className="text-center text-[11px] text-gray-600 mt-4 pt-3 border-t border-dashed">
-                Terima kasih telah berbelanja di <strong>PE Skinpro</strong>
-                <br />
-                Simpan struk ini sebagai bukti pembayaran.
-              </div>
-
-              <div className="mt-3">
+              <div className="p-4 bg-gray-50 border-t">
                 <Button
                   className="w-full text-white font-semibold"
                   style={{ background: "#009CDE" }}
@@ -828,7 +973,7 @@ function POSPage() {
                   Cetak Invoice
                 </Button>
               </div>
-            </div>
+            </>
           )}
         </DialogContent>
       </Dialog>

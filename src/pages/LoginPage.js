@@ -83,7 +83,7 @@ function LoginPage() {
           <p className="font-semibold mb-2">Akun Demo:</p>
           <div className="space-y-1 text-xs">
             <p><strong>Admin:</strong> admin@peskinpro.id / Admin#123</p>
-            <p><strong>Kasir:</strong> ayu@peskinpro.id / Cashier#123</p>
+            <p><strong>Kasir:</strong> kasir@peskinpro.id / Cashier#123</p>
             <p><strong>Finance:</strong> bima@peskinpro.id / Finance#123</p>
           </div>
         </div>
