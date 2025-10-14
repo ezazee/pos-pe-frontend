@@ -61,8 +61,7 @@ function POSPage() {
 
   // cart
   const [cart, setCart] = useState([]);
- const [discountInput, setDiscountInput] = useState("0"); 
-  
+  const [discountInput, setDiscountInput] = useState("0");
 
   // payment
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
@@ -476,11 +475,11 @@ function POSPage() {
 
         {/* RIGHT - Cart (Conditional View) */}
         <div
-          className={`w-full flex-1 flex-col lg:flex ${
+          className={`w-full flex-1 flex-col lg:flex overflow-y-auto ${
             mobileView === "cart" ? "flex" : "hidden"
           }`}
         >
-          <Card className="flex-1 overflow-y-auto p-3 md:p-4 mb-3 md:mb-4">
+          <Card className="p-3 md:p-4 mb-3 md:mb-4">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold text-lg flex items-center gap-2">
                 <ShoppingCart size={20} />
@@ -494,7 +493,7 @@ function POSPage() {
             </div>
 
             {cart.length === 0 ? (
-              <div className="text-center text-gray-500 py-12">
+              <div className="text-center py-12 text-gray-500">
                 <ShoppingCart
                   size={48}
                   className="mx-auto mb-4 text-gray-300"
@@ -502,12 +501,17 @@ function POSPage() {
                 <p>Keranjang kosong</p>
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {cart.map((item) => (
-                  <div key={item.product_id} className="border rounded-lg p-3">
-                    <div className="flex justify-between items-start mb-2">
-                      <div className="flex-1">
-                        <div className="font-semibold">{item.name}</div>
+                  <div
+                    key={item.product_id}
+                    className="border rounded-lg p-3 space-y-3"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="pr-2">
+                        <div className="font-semibold leading-tight">
+                          {item.name}
+                        </div>
                         <div className="text-sm text-gray-600">
                           {formatCurrency(item.price)}
                         </div>
@@ -515,18 +519,18 @@ function POSPage() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8"
+                        className="h-8 w-8 flex-shrink-0"
                         onClick={() => removeFromCart(item.product_id)}
                       >
                         <Trash2 size={16} className="text-red-500" />
                       </Button>
                     </div>
-
-                    <div className="flex items-center justify-between">
+                    <div className="flex justify-between items-center">
                       <div className="flex items-center gap-2">
                         <Button
                           variant="outline"
                           size="sm"
+                          className="h-9 w-9"
                           onClick={() =>
                             updateQuantity(item.product_id, item.qty - 1)
                           }
@@ -542,12 +546,13 @@ function POSPage() {
                               parseInt(e.target.value) || 1
                             )
                           }
-                          className="w-16 text-center"
+                          className="w-16 h-9 text-center"
                           min="1"
                         />
                         <Button
                           variant="outline"
                           size="sm"
+                          className="h-9 w-9"
                           onClick={() =>
                             updateQuantity(item.product_id, item.qty + 1)
                           }
@@ -571,15 +576,14 @@ function POSPage() {
           {/* Ringkasan Pembayaran */}
           <Card className="p-3 md:p-4">
             <div className="space-y-3 mb-4">
-              <div className="flex justify-between">
+              <div className="flex flex-wrap items-baseline justify-between gap-x-2">
                 <span>Subtotal:</span>
                 <span className="font-semibold">
                   {formatCurrency(subtotal())}
                 </span>
               </div>
 
-              {/* Input Diskon Total */}
-              <div className="flex items-center justify-between">
+              <div className="flex flex-wrap items-center justify-between gap-x-2">
                 <Label>Diskon Total (Rp):</Label>
                 <Input
                   type="text"
@@ -587,7 +591,7 @@ function POSPage() {
                   value={discountInput}
                   onChange={(e) => {
                     const value = e.target.value;
-                    if (/^\d*$/.test(value)) { // Hanya izinkan angka
+                    if (/^\d*$/.test(value)) {
                       setDiscountInput(value);
                     }
                   }}
@@ -596,7 +600,6 @@ function POSPage() {
                 />
               </div>
 
-              {/* ✅ TAMBAHKAN BLOK TOMBOL INI */}
               <div className="flex flex-wrap gap-2 pt-2">
                 <Button
                   size="sm"
@@ -626,11 +629,16 @@ function POSPage() {
                 >
                   20%
                 </Button>
-                <Button size="sm" variant="destructive" onClick={() => setDiscountInput("0")}>Reset</Button>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={() => setDiscountInput("0")}
+                >
+                  Reset
+                </Button>
               </div>
-              {/* AKHIR BLOK TOMBOL */}
 
-              <div className="flex justify-between text-xl font-bold pt-2 border-t">
+              <div className="flex flex-wrap items-baseline justify-between gap-x-2 text-xl font-bold pt-2 border-t">
                 <span>TOTAL:</span>
                 <span style={{ color: "#009CDE" }}>
                   {formatCurrency(grandTotal())}
@@ -687,284 +695,241 @@ function POSPage() {
 
       {/* DIALOGS */}
       <Dialog open={showPaymentDialog} onOpenChange={setShowPaymentDialog}>
-        <DialogContent className="w-[92vw] max-w-[560px] p-6">
-          <DialogHeader>
+        {/* ✅ 1. Ubah DialogContent menjadi flex container */}
+        <DialogContent className="w-[92vw] max-w-[560px] p-0 flex flex-col max-h-[90vh]">
+          {/* ✅ 2. Buat Header tetap di atas */}
+          <DialogHeader className="p-6 pb-4 border-b flex-shrink-0">
             <DialogTitle className="text-lg">Metode Pembayaran</DialogTitle>
           </DialogHeader>
-          <div
-            role="tablist"
-            aria-label="payment-method"
-            className="grid grid-cols-2 gap-2 mb-4"
-          >
-            <Button
-              type="button"
-              role="tab"
-              aria-selected={paymentMethod === "qris"}
-              onClick={() => setPaymentMethod("qris")}
-              className={`h-11 w-full rounded-lg text-sm sm:text-base font-semibold flex items-center justify-center
-       ${
-         paymentMethod === "qris"
-           ? "bg-[#009CDE] text-white hover:bg-[#008ac4]"
-           : "bg-white text-gray-800 border border-gray-300 hover:bg-gray-50"
-       }`}
-            >
-              <QrCode className="mr-2 h-5 w-5" />
-              QRIS
-            </Button>
-            <Button
-              type="button"
-              role="tab"
-              aria-selected={paymentMethod === "edc_debit"}
-              onClick={() => setPaymentMethod("edc_debit")}
-              className={`h-11 w-full rounded-lg text-sm sm:text-base font-semibold flex items-center justify-center
-       ${
-         paymentMethod === "edc_debit"
-           ? "bg-[#009CDE] text-white hover:bg-[#008ac4]"
-           : "bg-white text-gray-800 border border-gray-300 hover:bg-gray-50"
-       }`}
-            >
-              <CreditCard className="mr-2 h-5 w-5" />
-              Debit EDC
-            </Button>
-          </div>
 
-          {paymentMethod === "qris" ? (
-            <div className="space-y-3">
-              <div>
-                <div className="relative mb-4">
-                  <Label className="text-sm font-medium mb-1 block">
-                    Nama Pelanggan
-                  </Label>
-                  <div className="relative">
-                    <User
-                      className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                      size={16}
-                    />
+          {/* ✅ 3. Bungkus semua konten form dalam div yang bisa di-scroll */}
+          <div className="p-6 overflow-y-auto flex-1">
+            <div
+              role="tablist"
+              aria-label="payment-method"
+              className="grid grid-cols-2 gap-2 mb-4"
+            >
+              <Button
+                type="button"
+                role="tab"
+                aria-selected={paymentMethod === "qris"}
+                onClick={() => setPaymentMethod("qris")}
+                className={`h-11 w-full rounded-lg text-sm sm:text-base font-semibold flex items-center justify-center
+            ${
+              paymentMethod === "qris"
+                ? "bg-[#009CDE] text-white hover:bg-[#008ac4]"
+                : "bg-white text-gray-800 border border-gray-300 hover:bg-gray-50"
+            }`}
+              >
+                <QrCode className="mr-2 h-5 w-5" />
+                QRIS
+              </Button>
+              <Button
+                type="button"
+                role="tab"
+                aria-selected={paymentMethod === "edc_debit"}
+                onClick={() => setPaymentMethod("edc_debit")}
+                className={`h-11 w-full rounded-lg text-sm sm:text-base font-semibold flex items-center justify-center
+            ${
+              paymentMethod === "edc_debit"
+                ? "bg-[#009CDE] text-white hover:bg-[#008ac4]"
+                : "bg-white text-gray-800 border border-gray-300 hover:bg-gray-50"
+            }`}
+              >
+                <CreditCard className="mr-2 h-5 w-5" />
+                Debit EDC
+              </Button>
+            </div>
+
+            {paymentMethod === "qris" ? (
+              <div className="space-y-3">
+                <div>
+                  <div className="relative mb-4">
+                    <Label className="text-sm font-medium mb-1 block">
+                      Nama Pelanggan
+                    </Label>
+                    <div className="relative">
+                      <User
+                        className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                        size={16}
+                      />
+                      <Input
+                        placeholder="Masukkan Nama Pelanggan"
+                        value={customerName}
+                        onChange={(e) => setCustomerName(e.target.value)}
+                        className="pl-9"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label>Nama Bank</Label>
                     <Input
-                      placeholder="Masukkan Nama Pelanggan"
-                      value={customerName}
-                      onChange={(e) => setCustomerName(e.target.value)}
-                      className="pl-9"
+                      value={qrisAcquirer}
+                      onChange={(e) => setQrisAcquirer(e.target.value)}
+                      placeholder="Contoh: GoPay, OVO"
                     />
                   </div>
                 </div>
-
-                <div>
-                  <Label>Nama Bank</Label> {/* ✅ Diubah */}
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <Label className="text-sm font-medium mb-1 block">
+                  Nama Pelanggan
+                </Label>
+                <div className="relative">
+                  <User
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    size={16}
+                  />
                   <Input
-                    value={qrisAcquirer}
-                    onChange={(e) => setQrisAcquirer(e.target.value)}
-                    placeholder="Contoh: GoPay, OVO"
+                    placeholder="Masukkan Nama Pelanggan"
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                    className="pl-9"
                   />
                 </div>
               </div>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              <Label className="text-sm font-medium mb-1 block">
-                Nama Pelanggan
-              </Label>
-              <div className="relative">
-                <User
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                  size={16}
-                />
-                <Input
-                  placeholder="Masukkan Nama Pelanggan"
-                  value={customerName}
-                  onChange={(e) => setCustomerName(e.target.value)}
-                  className="pl-9"
-                />
+            )}
+
+            <div className="bg-gray-50 border border-gray-200 p-4 rounded-lg mt-4">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Total Pembayaran:</span>
+                <span
+                  className="text-2xl font-bold"
+                  style={{ color: "#009CDE" }}
+                >
+                  {formatCurrency(grandTotal())}
+                </span>
               </div>
             </div>
-          )}
-
-          <div className="bg-gray-50 border border-gray-200 p-4 rounded-lg mt-4">
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Total Pembayaran:</span>
-              <span className="text-2xl font-bold" style={{ color: "#009CDE" }}>
-                {formatCurrency(grandTotal())}
-              </span>
-            </div>
+            <Button
+              className="mt-4 w-full text-white font-semibold h-11"
+              style={{ background: "#009CDE" }}
+              onClick={confirmPayment}
+              disabled={loading}
+            >
+              {loading ? "Memproses..." : "Konfirmasi Pembayaran"}
+            </Button>
           </div>
-          <Button
-            className="mt-4 w-full text-white font-semibold h-11"
-            style={{ background: "#009CDE" }}
-            onClick={confirmPayment}
-            disabled={loading}
-          >
-            {loading ? "Memproses..." : "Konfirmasi Pembayaran"}
-          </Button>
         </DialogContent>
       </Dialog>
 
       {/* ================================== */}
       {/* ===== DIALOG INVOICE BARU ====== */}
       {/* ================================== */}
-      <Dialog open={showInvoice} onOpenChange={setShowInvoice}>
-        <DialogContent className="max-w-sm w-[95vw] p-0 font-sans">
+            <Dialog open={showInvoice} onOpenChange={setShowInvoice}>
+        {/* ✅ 1. Modifikasi DialogContent untuk layout flex vertikal */}
+        <DialogContent className="max-w-sm w-[95vw] p-0 flex flex-col max-h-[90vh]">
           {currentSale && (
             <>
-              <div
-                id="invoice-to-print"
-                className="p-6 text-[11px] leading-normal"
-              >
-                {/* Header Invoice */}
-                <div className="text-center mb-4">
-                  <img
-                    src="/img/logo.png"
-                    alt="PE SKINPRO"
-                    className="h-14 mx-auto mb-2"
-                  />
-                  <p className="font-bold text-base">PE SKINPRO ID</p>
-                  <p>PT Kilau Berlian Nusantara</p>
-                  <p>{currentSale.invoice_no}</p>
-                  <p className="mt-2">
-                    Royal Spring Residence. Block Titanium No. 05, 006/008, Jati
-                    Padang, Ps. Minggu, Jakarta Selatan
-                  </p>
-                  <p>
-                    Jl. Dukuh Patra No.75 001/013, Menteng Dalam, Tebet, Jakarta
-                    Selatan
-                  </p>
-                  <p className="mt-2">0812-1234-5678</p>
-                  <p>adm.peskinproid@gmail.com</p>
-                  <p className="mt-2 text-gray-700">
-                    {new Date(currentSale.created_at)
-                      .toLocaleString("en-US", {
-                        weekday: "short",
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: true,
-                      })
-                      .replace(",", " •")}
-                  </p>
-                </div>
-
-                {/* Detail Transaksi */}
-                <div className="grid grid-cols-[max-content,1fr] gap-x-2 text-xs">
-                  <div>Invoice Number :</div>
-                  <div className="text-right font-semibold">
-                    {currentSale.invoice_no}
+              {/* ✅ 2. Area Konten yang Bisa Di-scroll */}
+              <div className="overflow-y-auto flex-1">
+                <div id="invoice-to-print" className="p-6 text-[11px] leading-normal">
+                  
+                  {/* Header Invoice */}
+                  <div className="text-center mb-4">
+                    <img src="/img/logo.png" alt="PE SKINPRO" className="h-14 mx-auto mb-2" />
+                    <p className="font-bold text-base">PE SKINPRO ID</p>
+                    <p>PT Kilau Berlian Nusantara</p>
+                    <p>02.809.009.0-416.000</p>
+                    <p className="mt-2">Royal Spring Residence. Block Titanium No. 05, 006/008, Jati Padang, Ps. Minggu, Jakarta Selatan</p>
+                    <p>Jl. Dukuh Patra No.75 001/013, Menteng Dalam, Tebet, Jakarta Selatan</p>
+                    <p className="mt-2">0812-1234-5678</p>
+                    <p>adm.peskinproid@gmail.com</p>
+                    <p className="mt-2 text-gray-700">
+                      {new Date(currentSale.created_at).toLocaleString("en-US", {
+                        weekday: "short", month: "short", day: "numeric", year: "numeric",
+                        hour: "2-digit", minute: "2-digit", hour12: true,
+                      }).replace(",", " •")}
+                    </p>
                   </div>
 
-                  <div>Customer Name :</div>
-                  <div className="text-right">{currentSale.customer_name}</div>
-
-                  <div>Payment Method :</div>
-                  <div className="text-right">
-                    {" "}
-                    {currentSale.payment_method.toLowerCase() === "qris"
-                      ? "QRIS"
-                      : "Bank Transfer"}
-                  </div>
-
-                  {/* Logika Kondisional untuk Menampilkan Nama Bank */}
-                  {currentSale.payment_method === "qris" &&
-                    currentSale.qris_acquirer && (
+                  {/* Detail Transaksi */}
+                  <div className="grid grid-cols-[max-content,1fr] gap-x-2 text-xs">
+                    <div>Invoice Number</div>
+                    <div className="text-right font-semibold">: {currentSale.invoice_no}</div>
+                    <div>Customer Name</div>
+                    <div className="text-right">: {currentSale.customer_name}</div>
+                    <div>Payment Method</div>
+                    <div className="text-right">: {currentSale.payment_method.toLowerCase() === "qris" ? "QRIS" : "Bank Transfer"}</div>
+                    {currentSale.payment_method === 'qris' && currentSale.qris_acquirer && (
                       <>
-                        <div>Nama Bank :</div>
-                        <div className="text-right">
-                          {currentSale.qris_acquirer}
-                        </div>
+                        <div>Nama Bank</div>
+                        <div className="text-right">: {currentSale.qris_acquirer}</div>
                       </>
                     )}
-                </div>
+                  </div>
 
-                <div className="border-b border-black border-dashed my-2"></div>
+                  <div className="border-b border-black border-dashed my-2"></div>
 
-                {/* Tabel Item Produk */}
-                <table className="w-full text-left text-xs">
-                  <thead>
-                    <tr>
-                      <th className="font-semibold w-[15%]">SKU</th>
-                      <th className="font-semibold w-[45%]">Product</th>
-                      <th className="font-semibold text-center w-[15%]">Qty</th>
-                      <th className="font-semibold text-right w-[25%]">
-                        Price
-                      </th>
-                    </tr>
-                  </thead>
-                </table>
-                <div className="border-b border-black border-dashed my-1"></div>
-                <table className="w-full text-left text-xs">
-                  <tbody>
-                    {currentSale.items.map((item, idx) => (
-                      <tr key={idx}>
-                        <td className="w-[15%]">{item.sku}</td>
-                        <td className="w-[45%]">
-                          {item.name}
-                          {/* ✅ Tampilkan harga asli jika ada diskon */}
-                          {item.original_price &&
-                            item.original_price > item.price && (
-                              <div className="text-gray-500 line-through">
-                                {formatCurrency(item.original_price)}
-                              </div>
-                            )}
-                        </td>
-                        <td className="text-center w-[15%]">{item.qty} pcs</td>
-                        <td className="text-right w-[25%]">
-                          {formatCurrency(item.line_total)}
-                        </td>
+                  {/* Tabel Item Produk */}
+                  <table className="w-full text-left text-xs">
+                    <thead>
+                      <tr>
+                        <th className="font-semibold w-[15%]">SKU</th>
+                        <th className="font-semibold w-[45%]">Product</th>
+                        <th className="font-semibold text-center w-[15%]">Qty</th>
+                        <th className="font-semibold text-right w-[25%]">Price</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                  </table>
+                  <div className="border-b border-black border-dashed my-1"></div>
+                  <table className="w-full text-left text-xs">
+                    <tbody>
+                      {currentSale.items.map((item, idx) => (
+                        <tr key={idx} className="align-top border-b border-dashed">
+                          <td className="py-2 w-[15%]">{item.sku}</td>
+                          <td className="py-2 w-[45%] pr-2">
+                            <div>{item.name}</div>
+                            <div className="text-gray-600 text-[10px]">{item.qty} pcs x {formatCurrencyOnly(item.price)}</div>
+                          </td>
+                          <td className="py-2 text-center w-[15%]">
+                            {item.original_price && item.original_price > item.price && (
+                              <div className="line-through text-gray-500">{formatCurrencyOnly(item.original_price)}</div>
+                            )}
+                          </td>
+                          <td className="py-2 text-right w-[25%] font-semibold">{formatCurrencyOnly(item.line_total)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
 
-                <div className="border-b border-black border-dashed my-2"></div>
-
-                {/* Ringkasan Total */}
-                <div className="text-xs space-y-1">
-                  <div className="flex justify-between">
-                    <span>Subtotal:</span>
-                    <span>{formatCurrency(currentSale.subtotal)}</span>
-                  </div>
-                  {currentSale.discount_amount > 0 && (
+                  {/* Ringkasan Total */}
+                  <div className="border-t border-black border-dashed pt-2 mt-2 text-xs space-y-1">
                     <div className="flex justify-between">
-                      <span>Discount:</span>
-                      <span>
-                        -{formatCurrency(currentSale.discount_amount)}
-                      </span>
+                      <span>Subtotal:</span>
+                      <span>{formatCurrency(currentSale.subtotal)}</span>
                     </div>
-                  )}
-                  <div className="flex justify-between font-bold">
-                    <span>Amount Due:</span>
-                    <span>{formatCurrency(currentSale.total)}</span>
+                    {currentSale.discount_amount > 0 && (
+                      <div className="flex justify-between">
+                        <span>Discount:</span>
+                        <span>-{formatCurrency(currentSale.discount_amount)}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between font-bold">
+                      <span>Amount Due:</span>
+                      <span>{formatCurrency(currentSale.total)}</span>
+                    </div>
                   </div>
-                </div>
 
-                <div className="border-b border-black border-dashed my-2"></div>
+                  <div className="border-b border-black border-dashed my-2"></div>
 
-                {/* Footer Invoice */}
-                <div className="text-center mt-4 text-xs">
-                  <p>Thank You For Your Purchase!</p>
-                  <p className="mt-1">Follow Us To See More Update</p>
-
-                  <div className="flex flex-col items-center gap-1 mt-2">
-                    {/* Instagram */}
-                    <div className="flex items-center gap-2">
-                      <InstagramIcon className="h-4 w-4" />{" "}
-                      {/* USE THE NEW ICON */}
-                      <span>peskinpro.id</span>
-                    </div>
-                    {/* TikTok */}
-                    <div className="flex items-center gap-2">
-                      <TikTokIcon className="h-4 w-4" />
-                      <span>@peskinproid</span>
-                    </div>
-                    {/* Website */}
-                    <div className="flex items-center gap-2">
-                      <Globe className="h-4 w-4" />
-                      <span>www.peskinpro.id</span>
+                  {/* Footer Invoice */}
+                  <div className="text-center mt-4">
+                    <p>Thank You For Your Purchase!</p>
+                    <p className="mt-2">Follow Us To See More Update</p>
+                    <div className="flex flex-col items-center gap-1 mt-2">
+                      <div className="flex items-center gap-2"><InstagramIcon className="h-4 w-4" /><span>peskinpro.id</span></div>
+                      <div className="flex items-center gap-2"><TikTokIcon className="h-4 w-4" /><span>@peskinproid</span></div>
+                      <div className="flex items-center gap-2"><Globe className="h-4 w-4" /><span>www.peskinpro.id</span></div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="p-4 bg-gray-50 border-t">
+              {/* ✅ 3. Footer Modal (Tombol Cetak) dibuat statis */}
+              <div className="p-4 bg-gray-50 border-t flex-shrink-0">
                 <Button
                   className="w-full text-white font-semibold"
                   style={{ background: "#009CDE" }}
