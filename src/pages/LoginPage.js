@@ -79,14 +79,14 @@ function LoginPage() {
           </Button>
         </form>
 
-        <div className="mt-8 text-sm text-gray-600 border-t pt-6">
+        {/* <div className="mt-8 text-sm text-gray-600 border-t pt-6">
           <p className="font-semibold mb-2">Akun Demo:</p>
           <div className="space-y-1 text-xs">
             <p><strong>Admin:</strong> admin@peskinpro.id / Admin#123</p>
             <p><strong>Kasir:</strong> kasir@peskinpro.id / Cashier#123</p>
             <p><strong>Finance:</strong> bima@peskinpro.id / Finance#123</p>
           </div>
-        </div>
+        </div> */}
       </Card>
     </div>
   );

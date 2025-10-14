@@ -337,7 +337,7 @@ function POSPage() {
   // ======================= UI =======================
   return (
     <div className="relative h-full w-full" data-testid="pos-page">
-      <div className="flex h-full flex-col gap-4 p-4 pb-20 lg:flex-row lg:pb-4">
+      <div className="flex h-full flex-col gap-4 p-4 pb-28 lg:flex-row lg:pb-4">
         {/* LEFT - Products (Conditional View) */}
         <div
           className={`w-full flex-col lg:flex lg:w-3/5 xl:w-2/3 ${
