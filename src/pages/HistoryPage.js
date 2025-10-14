@@ -129,12 +129,21 @@ function HistoryPage() {
   };
 
   const printInvoice = () => {
-    const printContents = document.getElementById("invoice-to-print").innerHTML;
+    const printContents = document.getElementById("invoice-to-print")?.innerHTML;
+    if (!printContents) {
+      toast.error("Gagal menemukan konten invoice untuk dicetak.");
+      return;
+    }
+
     const originalContents = document.body.innerHTML;
     document.body.innerHTML = `<style>@media print { body { -webkit-print-color-adjust: exact; } }</style>${printContents}`;
-    window.print();
-    document.body.innerHTML = originalContents;
-    window.location.reload();
+
+    // Beri jeda 100 milidetik agar browser sempat me-render gambar dan layout
+    setTimeout(() => {
+      window.print();
+      document.body.innerHTML = originalContents;
+      window.location.reload(); // Wajib direload karena manipulasi DOM merusak React
+    }, 100);
   };
 
   return (

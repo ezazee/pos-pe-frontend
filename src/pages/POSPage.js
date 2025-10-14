@@ -325,12 +325,21 @@ function POSPage() {
   }
 
   const printInvoice = () => {
-    const printContents = document.getElementById("invoice-to-print").innerHTML;
+    const printContents = document.getElementById("invoice-to-print")?.innerHTML;
+    if (!printContents) {
+      toast.error("Gagal menemukan konten invoice untuk dicetak.");
+      return;
+    }
+
     const originalContents = document.body.innerHTML;
     document.body.innerHTML = `<style>@media print { body { -webkit-print-color-adjust: exact; } }</style>${printContents}`;
-    window.print();
-    document.body.innerHTML = originalContents;
-    window.location.reload();
+
+    // Beri jeda 100 milidetik agar browser sempat me-render gambar dan layout
+    setTimeout(() => {
+      window.print();
+      document.body.innerHTML = originalContents;
+      window.location.reload(); // Wajib direload karena manipulasi DOM merusak React
+    }, 100);
   };
 
   // ======================= UI =======================
@@ -818,47 +827,80 @@ function POSPage() {
       {/* ================================== */}
       {/* ===== DIALOG INVOICE BARU ====== */}
       {/* ================================== */}
-            <Dialog open={showInvoice} onOpenChange={setShowInvoice}>
+      <Dialog open={showInvoice} onOpenChange={setShowInvoice}>
         {/* ✅ 1. Modifikasi DialogContent untuk layout flex vertikal */}
         <DialogContent className="max-w-sm w-[95vw] p-0 flex flex-col max-h-[90vh]">
           {currentSale && (
             <>
               {/* ✅ 2. Area Konten yang Bisa Di-scroll */}
               <div className="overflow-y-auto flex-1">
-                <div id="invoice-to-print" className="p-6 text-[11px] leading-normal">
-                  
+                <div
+                  id="invoice-to-print"
+                  className="p-6 text-[11px] leading-normal"
+                >
                   {/* Header Invoice */}
                   <div className="text-center mb-4">
-                    <img src="/img/logo.png" alt="PE SKINPRO" className="h-14 mx-auto mb-2" />
+                    <img
+                      src="/img/logo.png"
+                      alt="PE SKINPRO"
+                      className="h-14 mx-auto mb-2"
+                    />
                     <p className="font-bold text-base">PE SKINPRO ID</p>
                     <p>PT Kilau Berlian Nusantara</p>
                     <p>02.809.009.0-416.000</p>
-                    <p className="mt-2">Royal Spring Residence. Block Titanium No. 05, 006/008, Jati Padang, Ps. Minggu, Jakarta Selatan</p>
-                    <p>Jl. Dukuh Patra No.75 001/013, Menteng Dalam, Tebet, Jakarta Selatan</p>
+                    <p className="mt-2">
+                      Royal Spring Residence. Block Titanium No. 05, 006/008,
+                      Jati Padang, Ps. Minggu, Jakarta Selatan
+                    </p>
+                    <p>
+                      Jl. Dukuh Patra No.75 001/013, Menteng Dalam, Tebet,
+                      Jakarta Selatan
+                    </p>
                     <p className="mt-2">0812-1234-5678</p>
                     <p>adm.peskinproid@gmail.com</p>
                     <p className="mt-2 text-gray-700">
-                      {new Date(currentSale.created_at).toLocaleString("en-US", {
-                        weekday: "short", month: "short", day: "numeric", year: "numeric",
-                        hour: "2-digit", minute: "2-digit", hour12: true,
-                      }).replace(",", " •")}
+                      {new Date(currentSale.created_at)
+                        .toLocaleString("en-US", {
+                          weekday: "short",
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          hour12: true,
+                        })
+                        .replace(",", " •")}
                     </p>
                   </div>
 
                   {/* Detail Transaksi */}
                   <div className="grid grid-cols-[max-content,1fr] gap-x-2 text-xs">
                     <div>Invoice Number:</div>
-                    <div className="text-right font-semibold"> {currentSale.invoice_no}</div>
+                    <div className="text-right font-semibold">
+                      {" "}
+                      {currentSale.invoice_no}
+                    </div>
                     <div>Customer Name:</div>
-                    <div className="text-right"> {currentSale.customer_name}</div>
+                    <div className="text-right">
+                      {" "}
+                      {currentSale.customer_name}
+                    </div>
                     <div>Payment Method:</div>
-                    <div className="text-right"> {currentSale.payment_method.toLowerCase() === "qris" ? "QRIS" : "Bank Transfer"}</div>
-                    {currentSale.payment_method === 'qris' && currentSale.qris_acquirer && (
-                      <>
-                        <div>Nama Bank:</div>
-                        <div className="text-right">{currentSale.qris_acquirer}</div>
-                      </>
-                    )}
+                    <div className="text-right">
+                      {" "}
+                      {currentSale.payment_method.toLowerCase() === "qris"
+                        ? "QRIS"
+                        : "Bank Transfer"}
+                    </div>
+                    {currentSale.payment_method === "qris" &&
+                      currentSale.qris_acquirer && (
+                        <>
+                          <div>Nama Bank:</div>
+                          <div className="text-right">
+                            {currentSale.qris_acquirer}
+                          </div>
+                        </>
+                      )}
                   </div>
 
                   <div className="border-b border-black border-dashed my-2"></div>
@@ -869,35 +911,41 @@ function POSPage() {
                       <tr>
                         <th className="font-semibold w-[15%]">SKU</th>
                         <th className="font-semibold w-[45%]">Product</th>
-                        <th className="font-semibold text-center w-[15%]">Qty</th>
-                        <th className="font-semibold text-right w-[25%]">Price</th>
+                        <th className="font-semibold text-center w-[15%]">
+                          Qty
+                        </th>
+                        <th className="font-semibold text-right w-[25%]">
+                          Price
+                        </th>
                       </tr>
                     </thead>
                   </table>
                   <div className="border-b border-black border-dashed my-1"></div>
                   <table className="w-full text-left text-xs">
-                  <tbody>
-                    {currentSale.items.map((item, idx) => (
-                      <tr key={idx}>
-                        <td className="w-[15%]">{item.sku}</td>
-                        <td className="w-[45%]">
-                          {item.name}
-                          {/* ✅ Tampilkan harga asli jika ada diskon */}
-                          {item.original_price &&
-                            item.original_price > item.price && (
-                              <div className="text-gray-500 line-through">
-                                {formatCurrency(item.original_price)}
-                              </div>
-                            )}
-                        </td>
-                        <td className="text-center w-[15%]">{item.qty} pcs</td>
-                        <td className="text-right w-[25%]">
-                          {formatCurrency(item.line_total)}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    <tbody>
+                      {currentSale.items.map((item, idx) => (
+                        <tr key={idx}>
+                          <td className="w-[15%]">{item.sku}</td>
+                          <td className="w-[45%]">
+                            {item.name}
+                            {/* ✅ Tampilkan harga asli jika ada diskon */}
+                            {item.original_price &&
+                              item.original_price > item.price && (
+                                <div className="text-gray-500 line-through">
+                                  {formatCurrency(item.original_price)}
+                                </div>
+                              )}
+                          </td>
+                          <td className="text-center w-[15%]">
+                            {item.qty} pcs
+                          </td>
+                          <td className="text-right w-[25%]">
+                            {formatCurrency(item.line_total)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
 
                   {/* Ringkasan Total */}
                   <div className="border-t border-black border-dashed pt-2 mt-2 text-xs space-y-1">
@@ -908,7 +956,9 @@ function POSPage() {
                     {currentSale.discount_amount > 0 && (
                       <div className="flex justify-between">
                         <span>Discount:</span>
-                        <span>-{formatCurrency(currentSale.discount_amount)}</span>
+                        <span>
+                          -{formatCurrency(currentSale.discount_amount)}
+                        </span>
                       </div>
                     )}
                     <div className="flex justify-between font-bold">
@@ -924,9 +974,18 @@ function POSPage() {
                     <p>Thank You For Your Purchase!</p>
                     <p className="mt-2">Follow Us To See More Update</p>
                     <div className="flex flex-col items-center gap-1 mt-2">
-                      <div className="flex items-center gap-2"><InstagramIcon className="h-4 w-4" /><span>peskinpro.id</span></div>
-                      <div className="flex items-center gap-2"><TikTokIcon className="h-4 w-4" /><span>@peskinproid</span></div>
-                      <div className="flex items-center gap-2"><Globe className="h-4 w-4" /><span>www.peskinpro.id</span></div>
+                      <div className="flex items-center gap-2">
+                        <InstagramIcon className="h-4 w-4" />
+                        <span>peskinpro.id</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <TikTokIcon className="h-4 w-4" />
+                        <span>@peskinproid</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Globe className="h-4 w-4" />
+                        <span>www.peskinpro.id</span>
+                      </div>
                     </div>
                   </div>
                 </div>
