@@ -6,49 +6,42 @@ import { Input } from "../components/ui/input";
 import { Card } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
+  Dialog, DialogContent, DialogHeader, DialogTitle,
 } from "../components/ui/dialog";
 import { Label } from "../components/ui/label";
 import { toast } from "sonner";
 import {
-  Search,
-  Plus,
-  Minus,
-  Trash2,
-  ShoppingCart,
-  CreditCard,
-  QrCode,
-  Image as ImageIcon,
-  Pencil,
-  User,
-  List,
-  Globe,
+  Search, Plus, Minus, Trash2, ShoppingCart,
+  CreditCard, QrCode, Image as ImageIcon, Pencil,
+  User, List, Globe,
 } from "lucide-react";
 
+/* Ikon kecil */
 const InstagramIcon = ({ className }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="currentColor"
-    className={className}
-  >
-    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.689-.073-4.948-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.79 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44 1.441-.645 1.441-1.44-.645-1.44-1.441-1.44z"></path>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.79 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44 1.441-.645 1.441-1.44-.645-1.44-1.441-1.44z" />
   </svg>
 );
-
 const TikTokIcon = ({ className }) => (
-  <svg
-    className={className}
-    fill="currentColor"
-    viewBox="0 0 512 512"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg className={className} fill="currentColor" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
     <path d="M412.19,118.66a109.27,109.27,0,0,1-9.45-5.5,132.87,132.87,0,0,1-24.27-20.62c-18.1-20.71-24.86-41.72-27.35-56.43h.1C349.14,23.9,350,16,350.13,16H267.69V334.78c0,4.28,0,8.51-.18,12.69,0,.52-.05,1-.08,1.56,0,.23,0,.47-.05.71,0,.06,0,.12,0,.18a70,70,0,0,1-35.22,55.56,68.8,68.8,0,0,1-34.11,9c-38.41,0-69.54-31.32-69.54-70s31.13-70,69.54-70a68.9,68.9,0,0,1,21.41,3.39l.1-83.94a153.14,153.14,0,0,0-118,34.52,161.79,161.79,0,0,0-35.3,43.53c-3.48,6-16.61,30.11-18.2,69.24-1,22.21,5.67,45.22,8.85,54.73v.2c2,5.6,9.75,24.71,22.38,40.82A167.53,167.53,0,0,0,115,470.66v-.2l.2.2C155.11,497.78,199.36,496,199.36,496c7.66-.31,33.32,0,62.46-13.81,32.32-15.31,50.72-38.12,50.72-38.12a158.46,158.46,0,0,0,27.64-45.93c7.46-19.61,9.95-43.13,9.95-52.53V176.49c1,.6,14.32,9.41,14.32,9.41s19.19,12.3,49.13,20.31c21.48,5.7,50.42,6.9,50.42,6.9V131.27C453.86,132.37,433.27,129.17,412.19,118.66Z" />
   </svg>
 );
+
+/* ===== kalkulasi paket (client-side, untuk tampilan realtime) ===== */
+const calcBulkTotal = (qty, tiers, singlePrice) => {
+  if (!qty) return 0;
+  const list = (tiers?.length ? tiers : [{ qty: 1, total: singlePrice }])
+    .slice()
+    .sort((a,b) => b.qty - a.qty);
+  const dp = Array(qty + 1).fill(Infinity);
+  dp[0] = 0;
+  for (let i = 1; i <= qty; i++) {
+    for (const t of list) if (t.qty <= i) dp[i] = Math.min(dp[i], dp[i - t.qty] + t.total);
+    dp[i] = Math.min(dp[i], dp[i - 1] + singlePrice);
+  }
+  return dp[qty];
+};
 
 function POSPage() {
   const { user, token } = useContext(AuthContext);
@@ -76,7 +69,7 @@ function POSPage() {
   const [currentSale, setCurrentSale] = useState(null);
   const [showInvoice, setShowInvoice] = useState(false);
 
-  // create product (admin)
+  // create/edit product (ringkas – sama seperti punyamu)
   const [showCreateProduct, setShowCreateProduct] = useState(false);
   const [pSku, setPSku] = useState("");
   const [pName, setPName] = useState("");
@@ -87,7 +80,6 @@ function POSPage() {
   const [pImage, setPImage] = useState(null);
   const [pImagePreview, setPImagePreview] = useState(null);
 
-  // edit product (admin)
   const [showEditProduct, setShowEditProduct] = useState(false);
   const [editProduct, setEditProduct] = useState(null);
   const [eSku, setESku] = useState("");
@@ -112,7 +104,7 @@ function POSPage() {
         params: { q: searchQuery, limit: 200 },
         headers: { Authorization: `Bearer ${token}` },
       });
-      setProducts(res.data.products || []);
+      setProducts(res.data.products || res.data || []);
     } catch {
       toast.error("Gagal memuat produk");
     }
@@ -120,70 +112,53 @@ function POSPage() {
 
   // ===== Helpers =====
   const formatCurrency = (n) => `Rp ${Number(n || 0).toLocaleString("id-ID")}`;
-  const formatCurrencyOnly = (n) => Number(n || 0).toLocaleString("id-ID");
+
   const addToCart = (product) => {
     const ex = cart.find((i) => i.product_id === product.id);
-    if (ex) updateQuantity(product.id, ex.qty + 1);
-    else {
-      setCart((prev) => [
-        ...prev,
-        {
-          product_id: product.id,
-          sku: product.sku,
-          name: product.name,
-          price: product.price,
-          qty: 1,
-          line_discount_amount: 0,
-          line_total: product.price,
-        },
-      ]);
-    }
+    if (ex) return updateQuantity(product.id, ex.qty + 1);
+    const qty = 1;
+    const lt = calcBulkTotal(qty, product.bulk_pricing, product.price);
+    setCart((prev) => [
+      ...prev,
+      {
+        product_id: product.id,
+        sku: product.sku,
+        name: product.name,
+        price: product.price, // info
+        qty,
+        line_total: lt,       // dihitung dari paket
+        bulk_pricing: product.bulk_pricing || [],
+      },
+    ]);
   };
+
   const updateQuantity = (pid, qty) => {
     if (qty < 1) return removeFromCart(pid);
     setCart(
       cart.map((i) =>
         i.product_id === pid
-          ? { ...i, qty, line_total: i.price * qty - i.line_discount_amount }
+          ? { ...i, qty, line_total: calcBulkTotal(qty, i.bulk_pricing, i.price) }
           : i
       )
     );
   };
-  const updateLineDiscount = (pid, discStr) => {
-    const d = parseInt(discStr) || 0;
-    setCart(
-      cart.map((i) => {
-        if (i.product_id !== pid) return i;
-        const valid = Math.min(d, i.price * i.qty);
-        return {
-          ...i,
-          line_discount_amount: valid,
-          line_total: i.price * i.qty - valid,
-        };
-      })
-    );
-  };
+
   const removeFromCart = (pid) =>
     setCart(cart.filter((i) => i.product_id !== pid));
-  const discountAmount = parseInt(discountInput) || 0;
-  const subtotal = () => cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const grandTotal = () => subtotal() - discountAmount;
 
-  const applyDiscountPercentage = (percentage) => {
-    const discountValue = Math.round((subtotal() * percentage) / 100);
+  const discountAmount = parseInt(discountInput) || 0;
+  const subtotal = () => cart.reduce((s, i) => s + i.line_total, 0);
+  const grandTotal = () => Math.max(0, subtotal() - discountAmount);
+
+  const applyDiscountPercentage = (p) => {
+    const discountValue = Math.round((subtotal() * p) / 100);
     setDiscountInput(String(discountValue));
   };
 
-  // ===== Create product =====
+  // ===== Create product (ringkas) =====
   const resetCreateForm = () => {
-    setPSku("");
-    setPName("");
-    setPCategory("");
-    setPPrice("");
-    setPStock("");
-    setPActive(true);
-    setPImage(null);
-    setPImagePreview(null);
+    setPSku(""); setPName(""); setPCategory(""); setPPrice(""); setPStock("");
+    setPActive(true); setPImage(null); setPImagePreview(null);
   };
   const onFileChangeNew = (file) => {
     setPImage(file || null);
@@ -191,8 +166,7 @@ function POSPage() {
   };
   async function handleCreateProduct() {
     if (!pSku.trim() || !pName.trim() || !pPrice || !pStock) {
-      toast.error("SKU, Nama, Harga, dan Stok wajib diisi");
-      return;
+      toast.error("SKU, Nama, Harga, dan Stok wajib diisi"); return;
     }
     try {
       const fd = new FormData();
@@ -203,12 +177,8 @@ function POSPage() {
       fd.append("stock_qty", String(pStock));
       fd.append("is_active", String(pActive));
       if (pImage) fd.append("image", pImage);
-
       await axios.post(`${API}/products`, fd, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
       });
       toast.success("Produk ditambahkan");
       setShowCreateProduct(false);
@@ -222,15 +192,10 @@ function POSPage() {
   // ===== Edit / Delete product =====
   const openEdit = (p) => {
     setEditProduct(p);
-    setESku(p.sku || "");
-    setEName(p.name || "");
-    setECategory(p.category || "");
-    setEPrice(p.price ?? "");
-    setEStock(p.stock_qty ?? "");
-    setEActive(p.is_active !== false);
-    setEImage(null);
-    setEImagePreview(null);
-    setShowEditProduct(true);
+    setESku(p.sku || ""); setEName(p.name || "");
+    setECategory(p.category || ""); setEPrice(p.price ?? "");
+    setEStock(p.stock_qty ?? ""); setEActive(p.is_active !== false);
+    setEImage(null); setEImagePreview(null); setShowEditProduct(true);
   };
   const onFileChangeEdit = (file) => {
     setEImage(file || null);
@@ -249,18 +214,12 @@ function POSPage() {
       if (eImage) fd.append("image", eImage);
 
       const res = await axios.patch(`${API}/products/${editProduct.id}`, fd, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
       });
       toast.success("Produk diperbarui");
       setShowEditProduct(false);
       setEditProduct(null);
-      // refresh local list cepat:
-      setProducts((prev) =>
-        prev.map((p) => (p.id === res.data.id ? res.data : p))
-      );
+      setProducts((prev) => prev.map((p) => (p.id === res.data.id ? res.data : p)));
     } catch (e) {
       toast.error(e?.response?.data?.message || "Gagal memperbarui produk");
     }
@@ -290,19 +249,14 @@ function POSPage() {
     setLoading(true);
     try {
       const payload = {
-        items: cart,
+        items: cart.map(i => ({ product_id: i.product_id, qty: i.qty })), // 👉 hanya id & qty
         discount_amount: discountAmount,
         payment_method: paymentMethod,
         customer_name: customerName || "-",
+        ...(paymentMethod === "qris"
+          ? { qris_acquirer: qrisAcquirer, qris_rrn: qrisRrn }
+          : { edc_issuer: edcIssuer, edc_approval_code: edcApprovalCode }),
       };
-      if (paymentMethod === "qris") {
-        payload.qris_acquirer = qrisAcquirer;
-        payload.qris_rrn = qrisRrn;
-      } else {
-        payload.edc_issuer = edcIssuer;
-        payload.edc_approval_code = edcApprovalCode;
-      }
-
       const res = await axios.post(`${API}/sales`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -311,12 +265,10 @@ function POSPage() {
       setShowPaymentDialog(false);
       setShowInvoice(true);
       setCart([]);
-      setDiscountAmount(0);
+      setDiscountInput("0");   // ✅ reset benar
       setCustomerName("");
-      setQrisAcquirer("");
-      setQrisRrn("");
-      setEdcIssuer("");
-      setEdcApprovalCode("");
+      setQrisAcquirer(""); setQrisRrn("");
+      setEdcIssuer(""); setEdcApprovalCode("");
     } catch (e) {
       toast.error(e?.response?.data?.message || "Transaksi gagal");
     } finally {
@@ -324,138 +276,66 @@ function POSPage() {
     }
   }
 
-const printInvoice = () => window.print();
+  const printInvoice = () => window.print();
 
-  // ======================= UI =======================
+  /* ======================= UI ======================= */
   return (
     <div className="relative h-full w-full" data-testid="pos-page">
       <div className="flex h-full flex-col gap-4 p-4 pb-28 lg:flex-row lg:pb-4">
-        {/* LEFT - Products (Conditional View) */}
-        <div
-          className={`w-full flex-col lg:flex lg:w-3/5 xl:w-2/3 ${
-            mobileView === "products" ? "flex" : "hidden"
-          }`}
-        >
-          {/* Header Katalog */}
+        {/* LEFT - Products */}
+        <div className={`w-full flex-col lg:flex lg:w-3/5 xl:w-2/3 ${mobileView === "products" ? "flex" : "hidden"}`}>
           <div className="mb-2 flex items-center justify-between">
             <div className="text-base font-semibold text-gray-700">Katalog</div>
             {isAdmin && (
-              <Button
-                onClick={() => setShowCreateProduct(true)}
-                className="gap-2"
-                style={{ background: "#009CDE", color: "white" }}
-                size="sm"
-                data-testid="btn-open-create-product"
-              >
-                <Plus size={16} />
-                Tambah Produk
+              <Button onClick={() => setShowCreateProduct(true)} className="gap-2" style={{ background: "#009CDE", color: "white" }} size="sm">
+                <Plus size={16} /> Tambah Produk
               </Button>
             )}
           </div>
 
-          {/* Search Bar */}
           <Card className="p-3 md:p-4 mb-3 md:mb-4">
             <div className="relative">
-              <Search
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                size={18}
-              />
-              <Input
-                placeholder="Cari produk (nama, SKU, barcode)..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <Input placeholder="Cari produk (nama, SKU, barcode)..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10" />
             </div>
           </Card>
 
-          {/* Product Grid Card */}
           <Card className="flex-1 overflow-y-auto p-3 md:p-4">
             <h3 className="mb-3 font-semibold text-lg md:mb-4">Produk</h3>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
               {products.map((product) => (
-                <div
-                  key={product.id}
-                  className="p-3 border-2 rounded-lg text-left hover:border-[#009CDE] transition-all"
-                  style={{ borderColor: "#e5e7eb" }}
-                >
-                  <button
-                    onClick={() => addToCart(product)}
-                    className="w-full text-left"
-                  >
+                <div key={product.id} className="p-3 border-2 rounded-lg text-left hover:border-[#009CDE] transition-all" style={{ borderColor: "#e5e7eb" }}>
+                  <button onClick={() => addToCart(product)} className="w-full text-left">
                     <div className="mb-2 overflow-hidden rounded-lg border bg-[#1E9BD5]">
                       <div className="relative aspect-[4/3]">
                         <img
-                          src={
-                            product.image_url || "/img/placeholder-product.png"
-                          }
+                          src={product.image_url || "/img/placeholder-product.png"}
                           alt={product.name}
                           loading="lazy"
                           decoding="async"
-                          className="absolute inset-0 h-full w-full object-contain p-2 transition-transform duration-200 hover:scale-[1.01]"
-                          onError={(e) => {
-                            e.currentTarget.onerror = null;
-                            e.currentTarget.src =
-                              "/img/placeholder-product.png";
-                          }}
+                          className="absolute inset-0 h-full w-full object-contain p-2"
+                          onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = "/img/placeholder-product.png"; }}
                         />
                       </div>
                     </div>
-                    <div className="font-semibold text-sm mb-1 line-clamp-2">
-                      {product.name}
+                    <div className="font-semibold text-sm mb-1 line-clamp-2">{product.name}</div>
+                    <div className="text-xs text-gray-500 mb-1">SKU: {product.sku}</div>
+                    <div className="font-bold items-baseline" style={{ color: "#009CDE" }}>
+                      <span>{formatCurrency(product.price)}</span>
                     </div>
-                    <div className="text-xs text-gray-500 mb-1">
-                      SKU: {product.sku}
-                    </div>
-                    <div
-                      className="font-bold items-baseline"
-                      style={{ color: "#009CDE" }}
-                    >
-                      {/* Logika untuk menampilkan harga coret jika ada */}
-                      {product.original_price &&
-                      product.original_price > product.price ? (
-                        <>
-                          <span>{formatCurrency(product.price)}</span>
-                          <br />
-                          <span className="text-sm font-normal text-gray-500 line-through mr-2">
-                            {formatCurrency(product.original_price)}
-                          </span>
-                        </>
-                      ) : (
-                        <span>{formatCurrency(product.price)}</span>
-                      )}
-                    </div>
-                    <div className="text-xs text-gray-500 mt-1">
-                      Stok: {product.stock_qty}
-                    </div>
+
+                    <div className="text-xs text-gray-500 mt-1">Stok: {product.stock_qty}</div>
                   </button>
 
                   {isAdmin && (
                     <div className="mt-2 flex justify-end">
                       <div className="inline-flex items-center rounded-lg border bg-white/80 px-1 py-1 shadow-sm backdrop-blur">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => openEdit(product)}
-                          className="h-8 px-2 rounded-md border-none hover:bg-gray-100"
-                          title="Edit produk"
-                        >
-                          <Pencil size={14} className="mr-1" />
-                          <span className="hidden sm:inline">Edit</span>
+                        <Button variant="outline" size="sm" onClick={() => openEdit(product)} className="h-8 px-2 rounded-md border-none hover:bg-gray-100" title="Edit produk">
+                          <Pencil size={14} className="mr-1" /><span className="hidden sm:inline">Edit</span>
                         </Button>
-                        <div
-                          className="mx-1 h-5 w-px bg-gray-200"
-                          aria-hidden
-                        />
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => handleDeleteProduct(product)}
-                          className="h-8 px-2 rounded-md"
-                          title="Hapus produk"
-                        >
-                          <Trash2 size={14} className="mr-1" />
-                          <span className="hidden sm:inline">Hapus</span>
+                        <div className="mx-1 h-5 w-px bg-gray-200" aria-hidden />
+                        <Button variant="destructive" size="sm" onClick={() => handleDeleteProduct(product)} className="h-8 px-2 rounded-md" title="Hapus produk">
+                          <Trash2 size={14} className="mr-1" /><span className="hidden sm:inline">Hapus</span>
                         </Button>
                       </div>
                     </div>
@@ -466,98 +346,43 @@ const printInvoice = () => window.print();
           </Card>
         </div>
 
-        {/* RIGHT - Cart (Conditional View) */}
-        <div
-          className={`w-full flex-1 flex-col lg:flex overflow-y-auto ${
-            mobileView === "cart" ? "flex" : "hidden"
-          }`}
-        >
+        {/* RIGHT - Cart */}
+        <div className={`w-full flex-1 flex-col lg:flex overflow-y-auto ${mobileView === "cart" ? "flex" : "hidden"}`}>
           <Card className="p-3 md:p-4 mb-3 md:mb-4">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold text-lg flex items-center gap-2">
-                <ShoppingCart size={20} />
-                Keranjang ({cart.length})
-              </h3>
-              {cart.length > 0 && (
-                <Button variant="outline" size="sm" onClick={() => setCart([])}>
-                  Kosongkan
-                </Button>
-              )}
+              <h3 className="font-semibold text-lg flex items-center gap-2"><ShoppingCart size={20} /> Keranjang ({cart.length})</h3>
+              {cart.length > 0 && <Button variant="outline" size="sm" onClick={() => setCart([])}>Kosongkan</Button>}
             </div>
 
             {cart.length === 0 ? (
               <div className="text-center py-12 text-gray-500">
-                <ShoppingCart
-                  size={48}
-                  className="mx-auto mb-4 text-gray-300"
-                />
+                <ShoppingCart size={48} className="mx-auto mb-4 text-gray-300" />
                 <p>Keranjang kosong</p>
               </div>
             ) : (
               <div className="space-y-4">
                 {cart.map((item) => (
-                  <div
-                    key={item.product_id}
-                    className="border rounded-lg p-3 space-y-3"
-                  >
+                  <div key={item.product_id} className="border rounded-lg p-3 space-y-3">
                     <div className="flex justify-between items-start">
                       <div className="pr-2">
-                        <div className="font-semibold leading-tight">
-                          {item.name}
-                        </div>
+                        <div className="font-semibold leading-tight">{item.name}</div>
                         <div className="text-sm text-gray-600">
                           {formatCurrency(item.price)}
+                          {item.qty > 1 && <> • efektif {formatCurrency(Math.round(item.line_total / item.qty))}/pcs</>}
                         </div>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 flex-shrink-0"
-                        onClick={() => removeFromCart(item.product_id)}
-                      >
+                      <Button variant="ghost" size="icon" className="h-8 w-8 flex-shrink-0" onClick={() => removeFromCart(item.product_id)}>
                         <Trash2 size={16} className="text-red-500" />
                       </Button>
                     </div>
                     <div className="flex justify-between items-center">
                       <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="h-9 w-9"
-                          onClick={() =>
-                            updateQuantity(item.product_id, item.qty - 1)
-                          }
-                        >
-                          <Minus size={16} />
-                        </Button>
-                        <Input
-                          type="number"
-                          value={item.qty}
-                          onChange={(e) =>
-                            updateQuantity(
-                              item.product_id,
-                              parseInt(e.target.value) || 1
-                            )
-                          }
-                          className="w-16 h-9 text-center"
-                          min="1"
-                        />
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="h-9 w-9"
-                          onClick={() =>
-                            updateQuantity(item.product_id, item.qty + 1)
-                          }
-                        >
-                          <Plus size={16} />
-                        </Button>
+                        <Button variant="outline" size="sm" className="h-9 w-9" onClick={() => updateQuantity(item.product_id, item.qty - 1)}><Minus size={16} /></Button>
+                        <Input type="number" value={item.qty} onChange={(e) => updateQuantity(item.product_id, parseInt(e.target.value) || 1)} className="w-16 h-9 text-center" min="1" />
+                        <Button variant="outline" size="sm" className="h-9 w-9" onClick={() => updateQuantity(item.product_id, item.qty + 1)}><Plus size={16} /></Button>
                       </div>
-                      <div
-                        className="font-bold text-right"
-                        style={{ color: "#009CDE" }}
-                      >
-                        {formatCurrency(item.price * item.qty)}
+                      <div className="font-bold text-right" style={{ color: "#009CDE" }}>
+                        {formatCurrency(item.line_total)}
                       </div>
                     </div>
                   </div>
@@ -571,216 +396,93 @@ const printInvoice = () => window.print();
             <div className="space-y-3 mb-4">
               <div className="flex flex-wrap items-baseline justify-between gap-x-2">
                 <span>Subtotal:</span>
-                <span className="font-semibold">
-                  {formatCurrency(subtotal())}
-                </span>
+                <span className="font-semibold">{formatCurrency(subtotal())}</span>
               </div>
 
               <div className="flex flex-wrap items-center justify-between gap-x-2">
                 <Label>Diskon Total (Rp):</Label>
                 <Input
-                  type="text"
-                  inputMode="numeric"
-                  value={discountInput}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    if (/^\d*$/.test(value)) {
-                      setDiscountInput(value);
-                    }
-                  }}
-                  className="w-32 text-right"
-                  placeholder="0"
+                  type="text" inputMode="numeric" value={discountInput}
+                  onChange={(e) => { const v = e.target.value; if (/^\d*$/.test(v)) setDiscountInput(v); }}
+                  className="w-32 text-right" placeholder="0"
                 />
               </div>
 
               <div className="flex flex-wrap gap-2 pt-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => applyDiscountPercentage(5)}
-                >
-                  5%
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => applyDiscountPercentage(10)}
-                >
-                  10%
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => applyDiscountPercentage(15)}
-                >
-                  15%
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => applyDiscountPercentage(20)}
-                >
-                  20%
-                </Button>
-                <Button
-                  size="sm"
-                  variant="destructive"
-                  onClick={() => setDiscountInput("0")}
-                >
-                  Reset
-                </Button>
+                <Button size="sm" variant="outline" onClick={() => applyDiscountPercentage(5)}>5%</Button>
+                <Button size="sm" variant="outline" onClick={() => applyDiscountPercentage(10)}>10%</Button>
+                <Button size="sm" variant="outline" onClick={() => applyDiscountPercentage(15)}>15%</Button>
+                <Button size="sm" variant="outline" onClick={() => applyDiscountPercentage(20)}>20%</Button>
+                <Button size="sm" variant="destructive" onClick={() => setDiscountInput("0")}>Reset</Button>
               </div>
 
               <div className="flex flex-wrap items-baseline justify-between gap-x-2 text-xl font-bold pt-2 border-t">
                 <span>TOTAL:</span>
-                <span style={{ color: "#009CDE" }}>
-                  {formatCurrency(grandTotal())}
-                </span>
+                <span style={{ color: "#009CDE" }}>{formatCurrency(grandTotal())}</span>
               </div>
             </div>
 
-            <Button
-              className="w-full text-white font-semibold py-6 text-lg"
-              style={{ background: "#009CDE" }}
-              onClick={handlePayment}
-              disabled={cart.length === 0}
-            >
+            <Button className="w-full text-white font-semibold py-6 text-lg" style={{ background: "#009CDE" }} onClick={handlePayment} disabled={cart.length === 0}>
               Bayar Sekarang
             </Button>
           </Card>
         </div>
       </div>
 
-      {/* Navigasi Bawah untuk Mobile & Tablet */}
+      {/* Navigasi bawah (mobile) */}
       <div className="fixed bottom-0 left-0 z-10 grid w-full grid-cols-2 gap-2 border-t bg-white/80 p-2 backdrop-blur-sm lg:hidden">
-        <Button
-          onClick={() => setMobileView("products")}
-          variant={mobileView === "products" ? "default" : "outline"}
+        <Button onClick={() => setMobileView("products")} variant={mobileView === "products" ? "default" : "outline"}
           className="flex h-12 items-center justify-center gap-2 text-base"
-          style={
-            mobileView === "products"
-              ? { background: "#009CDE", color: "white" }
-              : {}
-          }
-        >
-          <List size={20} />
-          Katalog
+          style={mobileView === "products" ? { background: "#009CDE", color: "white" } : {}}>
+          <List size={20} /> Katalog
         </Button>
-        <Button
-          onClick={() => setMobileView("cart")}
-          variant={mobileView === "cart" ? "default" : "outline"}
+        <Button onClick={() => setMobileView("cart")} variant={mobileView === "cart" ? "default" : "outline"}
           className="relative flex h-12 items-center justify-center gap-2 text-base"
-          style={
-            mobileView === "cart"
-              ? { background: "#009CDE", color: "white" }
-              : {}
-          }
-        >
-          <ShoppingCart size={20} />
-          Keranjang
-          {cart.length > 0 && (
-            <Badge className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 p-1 text-xs text-white">
-              {cart.length}
-            </Badge>
-          )}
+          style={mobileView === "cart" ? { background: "#009CDE", color: "white" } : {}}>
+          <ShoppingCart size={20} /> Keranjang
+          {cart.length > 0 && (<Badge className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 p-1 text-xs text-white">{cart.length}</Badge>)}
         </Button>
       </div>
 
-      {/* DIALOGS */}
+      {/* Dialog Pembayaran */}
       <Dialog open={showPaymentDialog} onOpenChange={setShowPaymentDialog}>
-        {/* ✅ 1. Ubah DialogContent menjadi flex container */}
         <DialogContent className="w-[92vw] max-w-[560px] p-0 flex flex-col max-h-[90vh]">
-          {/* ✅ 2. Buat Header tetap di atas */}
           <DialogHeader className="p-6 pb-4 border-b flex-shrink-0">
             <DialogTitle className="text-lg">Metode Pembayaran</DialogTitle>
           </DialogHeader>
 
-          {/* ✅ 3. Bungkus semua konten form dalam div yang bisa di-scroll */}
           <div className="p-6 overflow-y-auto flex-1">
-            <div
-              role="tablist"
-              aria-label="payment-method"
-              className="grid grid-cols-2 gap-2 mb-4"
-            >
-              <Button
-                type="button"
-                role="tab"
-                aria-selected={paymentMethod === "qris"}
-                onClick={() => setPaymentMethod("qris")}
-                className={`h-11 w-full rounded-lg text-sm sm:text-base font-semibold flex items-center justify-center
-            ${
-              paymentMethod === "qris"
-                ? "bg-[#009CDE] text-white hover:bg-[#008ac4]"
-                : "bg-white text-gray-800 border border-gray-300 hover:bg-gray-50"
-            }`}
-              >
-                <QrCode className="mr-2 h-5 w-5" />
-                QRIS
+            <div role="tablist" aria-label="payment-method" className="grid grid-cols-2 gap-2 mb-4">
+              <Button type="button" role="tab" aria-selected={paymentMethod === "qris"} onClick={() => setPaymentMethod("qris")}
+                className={`h-11 w-full rounded-lg text-sm sm:text-base font-semibold flex items-center justify-center ${paymentMethod === "qris" ? "bg-[#009CDE] text-white hover:bg-[#008ac4]" : "bg-white text-gray-800 border border-gray-300 hover:bg-gray-50"}`}>
+                <QrCode className="mr-2 h-5 w-5" /> QRIS
               </Button>
-              <Button
-                type="button"
-                role="tab"
-                aria-selected={paymentMethod === "edc_debit"}
-                onClick={() => setPaymentMethod("edc_debit")}
-                className={`h-11 w-full rounded-lg text-sm sm:text-base font-semibold flex items-center justify-center
-            ${
-              paymentMethod === "edc_debit"
-                ? "bg-[#009CDE] text-white hover:bg-[#008ac4]"
-                : "bg-white text-gray-800 border border-gray-300 hover:bg-gray-50"
-            }`}
-              >
-                <CreditCard className="mr-2 h-5 w-5" />
-                Debit EDC
+              <Button type="button" role="tab" aria-selected={paymentMethod === "edc_debit"} onClick={() => setPaymentMethod("edc_debit")}
+                className={`h-11 w-full rounded-lg text-sm sm:text-base font-semibold flex items-center justify-center ${paymentMethod === "edc_debit" ? "bg-[#009CDE] text-white hover:bg-[#008ac4]" : "bg-white text-gray-800 border border-gray-300 hover:bg-gray-50"}`}>
+                <CreditCard className="mr-2 h-5 w-5" /> Debit EDC
               </Button>
             </div>
 
             {paymentMethod === "qris" ? (
               <div className="space-y-3">
+                <div className="relative mb-4">
+                  <Label className="text-sm font-medium mb-1 block">Nama Pelanggan</Label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                    <Input placeholder="Masukkan Nama Pelanggan" value={customerName} onChange={(e) => setCustomerName(e.target.value)} className="pl-9" />
+                  </div>
+                </div>
                 <div>
-                  <div className="relative mb-4">
-                    <Label className="text-sm font-medium mb-1 block">
-                      Nama Pelanggan
-                    </Label>
-                    <div className="relative">
-                      <User
-                        className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                        size={16}
-                      />
-                      <Input
-                        placeholder="Masukkan Nama Pelanggan"
-                        value={customerName}
-                        onChange={(e) => setCustomerName(e.target.value)}
-                        className="pl-9"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label>Nama Bank</Label>
-                    <Input
-                      value={qrisAcquirer}
-                      onChange={(e) => setQrisAcquirer(e.target.value)}
-                      placeholder="Contoh: GoPay, OVO"
-                    />
-                  </div>
+                  <Label>Nama Bank</Label>
+                  <Input value={qrisAcquirer} onChange={(e) => setQrisAcquirer(e.target.value)} placeholder="Contoh: GoPay, OVO" />
                 </div>
               </div>
             ) : (
               <div className="space-y-3">
-                <Label className="text-sm font-medium mb-1 block">
-                  Nama Pelanggan
-                </Label>
+                <Label className="text-sm font-medium mb-1 block">Nama Pelanggan</Label>
                 <div className="relative">
-                  <User
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                    size={16}
-                  />
-                  <Input
-                    placeholder="Masukkan Nama Pelanggan"
-                    value={customerName}
-                    onChange={(e) => setCustomerName(e.target.value)}
-                    className="pl-9"
-                  />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                  <Input placeholder="Masukkan Nama Pelanggan" value={customerName} onChange={(e) => setCustomerName(e.target.value)} className="pl-9" />
                 </div>
               </div>
             )}
@@ -788,119 +490,56 @@ const printInvoice = () => window.print();
             <div className="bg-gray-50 border border-gray-200 p-4 rounded-lg mt-4">
               <div className="flex justify-between items-center">
                 <span className="text-gray-600">Total Pembayaran:</span>
-                <span
-                  className="text-2xl font-bold"
-                  style={{ color: "#009CDE" }}
-                >
-                  {formatCurrency(grandTotal())}
-                </span>
+                <span className="text-2xl font-bold" style={{ color: "#009CDE" }}>{formatCurrency(grandTotal())}</span>
               </div>
             </div>
-            <Button
-              className="mt-4 w-full text-white font-semibold h-11"
-              style={{ background: "#009CDE" }}
-              onClick={confirmPayment}
-              disabled={loading}
-            >
+            <Button className="mt-4 w-full text-white font-semibold h-11" style={{ background: "#009CDE" }} onClick={confirmPayment} disabled={loading}>
               {loading ? "Memproses..." : "Konfirmasi Pembayaran"}
             </Button>
           </div>
         </DialogContent>
       </Dialog>
 
-      {/* ================================== */}
-      {/* ===== DIALOG INVOICE BARU ====== */}
-      {/* ================================== */}
+      {/* Dialog Invoice */}
       <Dialog open={showInvoice} onOpenChange={setShowInvoice}>
-        {/* ✅ 1. Modifikasi DialogContent untuk layout flex vertikal */}
         <DialogContent className="max-w-sm w-[95vw] p-0 flex flex-col max-h-[90vh]">
           {currentSale && (
             <>
-              {/* ✅ 2. Area Konten yang Bisa Di-scroll */}
               <div className="overflow-y-auto flex-1">
-                <div
-                  id="invoice-to-print"
-                  className="p-6 text-[11px] leading-normal"
-                >
-                  {/* Header Invoice */}
+                <div id="invoice-to-print" className="p-6 text-[11px] leading-normal">
                   <div className="text-center mb-4">
-                    <img
-                      src="/img/logo.png"
-                      alt="PE SKINPRO"
-                      className="h-14 mx-auto mb-2"
-                    />
+                    <img src="/img/logo.png" alt="PE SKINPRO" className="h-14 mx-auto mb-2" />
                     <p className="font-bold text-base">PE SKINPRO ID</p>
                     <p>PT Kilau Berlian Nusantara</p>
                     <p>{currentSale.invoice_no}</p>
-                    <p className="mt-2">
-                      Royal Spring Residence. Block Titanium No. 05, 006/008,
-                      Jati Padang, Ps. Minggu, Jakarta Selatan
-                    </p>
-                    <p>
-                      Jl. Dukuh Patra No.75 001/013, Menteng Dalam, Tebet,
-                      Jakarta Selatan
-                    </p>
+                    <p className="mt-2">Royal Spring Residence. Block Titanium No. 05, 006/008, Jati Padang, Ps. Minggu, Jakarta Selatan</p>
+                    <p>Jl. Dukuh Patra No.75 001/013, Menteng Dalam, Tebet, Jakarta Selatan</p>
                     <p className="mt-2">0812-1234-5678</p>
                     <p>adm.peskinproid@gmail.com</p>
                     <p className="mt-2 text-gray-700">
                       {new Date(currentSale.created_at)
-                        .toLocaleString("en-US", {
-                          weekday: "short",
-                          month: "short",
-                          day: "numeric",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          hour12: true,
-                        })
+                        .toLocaleString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true })
                         .replace(",", " •")}
                     </p>
                   </div>
 
-                  {/* Detail Transaksi */}
                   <div className="grid grid-cols-[max-content,1fr] gap-x-2 text-xs">
-                    <div>Invoice Number:</div>
-                    <div className="text-right font-semibold">
-                      {" "}
-                      {currentSale.invoice_no}
-                    </div>
-                    <div>Customer Name:</div>
-                    <div className="text-right">
-                      {" "}
-                      {currentSale.customer_name}
-                    </div>
+                    <div>Invoice Number:</div><div className="text-right font-semibold">{currentSale.invoice_no}</div>
+                    <div>Customer Name:</div><div className="text-right">{currentSale.customer_name}</div>
                     <div>Payment Method:</div>
-                    <div className="text-right">
-                      {" "}
-                      {currentSale.payment_method.toLowerCase() === "qris"
-                        ? "QRIS"
-                        : "Bank Transfer"}
-                    </div>
-                    {currentSale.payment_method === "qris" &&
-                      currentSale.qris_acquirer && (
-                        <>
-                          <div>Nama Bank:</div>
-                          <div className="text-right">
-                            {currentSale.qris_acquirer}
-                          </div>
-                        </>
-                      )}
+                    <div className="text-right">{currentSale.payment_method.toLowerCase() === "qris" ? "QRIS" : "Debit EDC"}</div>
+                    {currentSale.payment_method === "qris" && currentSale.qris_acquirer && (<><div>Nama Bank:</div><div className="text-right">{currentSale.qris_acquirer}</div></>)}
                   </div>
 
                   <div className="border-b border-black border-dashed my-2"></div>
 
-                  {/* Tabel Item Produk */}
                   <table className="w-full text-left text-xs">
                     <thead>
                       <tr>
                         <th className="font-semibold w-[15%]">SKU</th>
                         <th className="font-semibold w-[45%]">Product</th>
-                        <th className="font-semibold text-center w-[15%]">
-                          Qty
-                        </th>
-                        <th className="font-semibold text-right w-[25%]">
-                          Price
-                        </th>
+                        <th className="font-semibold text-center w-[15%]">Qty</th>
+                        <th className="font-semibold text-right w-[25%]">Price</th>
                       </tr>
                     </thead>
                   </table>
@@ -910,78 +549,38 @@ const printInvoice = () => window.print();
                       {currentSale.items.map((item, idx) => (
                         <tr key={idx}>
                           <td className="w-[15%]">{item.sku}</td>
-                          <td className="w-[45%]">
-                            {item.name}
-                            {/* ✅ Tampilkan harga asli jika ada diskon */}
-                            {item.original_price &&
-                              item.original_price > item.price && (
-                                <div className="text-gray-500 line-through">
-                                  {formatCurrency(item.original_price)}
-                                </div>
-                              )}
-                          </td>
-                          <td className="text-center w-[15%]">
-                            {item.qty} pcs
-                          </td>
-                          <td className="text-right w-[25%]">
-                            {formatCurrency(item.line_total)}
-                          </td>
+                          <td className="w-[45%]">{item.name}</td>
+                          <td className="text-center w-[15%]">{item.qty} pcs</td>
+                          <td className="text-right w-[25%]">{formatCurrency(item.line_total)}</td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
 
-                  {/* Ringkasan Total */}
                   <div className="border-t border-black border-dashed pt-2 mt-2 text-xs space-y-1">
-                    <div className="flex justify-between">
-                      <span>Subtotal:</span>
-                      <span>{formatCurrency(currentSale.subtotal)}</span>
-                    </div>
+                    <div className="flex justify-between"><span>Subtotal:</span><span>{formatCurrency(currentSale.subtotal)}</span></div>
                     {currentSale.discount_amount > 0 && (
-                      <div className="flex justify-between">
-                        <span>Discount:</span>
-                        <span>
-                          -{formatCurrency(currentSale.discount_amount)}
-                        </span>
-                      </div>
+                      <div className="flex justify-between"><span>Discount:</span><span>-{formatCurrency(currentSale.discount_amount)}</span></div>
                     )}
-                    <div className="flex justify-between font-bold">
-                      <span>Amount Due:</span>
-                      <span>{formatCurrency(currentSale.total)}</span>
-                    </div>
+                    <div className="flex justify-between font-bold"><span>Amount Due:</span><span>{formatCurrency(currentSale.total)}</span></div>
                   </div>
 
                   <div className="border-b border-black border-dashed my-2"></div>
 
-                  {/* Footer Invoice */}
                   <div className="text-center mt-4">
                     <p>Thank You For Your Purchase!</p>
                     <p className="mt-2">Follow Us To See More Update</p>
                     <div className="flex flex-col items-center gap-1 mt-2">
-                      <div className="flex items-center gap-2">
-                        <InstagramIcon className="h-4 w-4" />
-                        <span>peskinpro.id</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <TikTokIcon className="h-4 w-4" />
-                        <span>@peskinproid</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Globe className="h-4 w-4" />
-                        <span>www.peskinpro.id</span>
-                      </div>
+                      <div className="flex items-center gap-2"><InstagramIcon className="h-4 w-4" /><span>peskinpro.id</span></div>
+                      <div className="flex items-center gap-2"><TikTokIcon className="h-4 w-4" /><span>@peskinproid</span></div>
+                      <div className="flex items-center gap-2"><Globe className="h-4 w-4" /><span>www.peskinpro.id</span></div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* ✅ 3. Footer Modal (Tombol Cetak) dibuat statis */}
               <div className="p-4 bg-gray-50 border-t flex-shrink-0">
-                <Button
-                  className="w-full text-white font-semibold"
-                  style={{ background: "#009CDE" }}
-                  onClick={printInvoice}
-                >
+                <Button className="w-full text-white font-semibold" style={{ background: "#009CDE" }} onClick={printInvoice}>
                   Cetak Invoice
                 </Button>
               </div>
@@ -1204,7 +803,7 @@ const printInvoice = () => window.print();
           )}
         </DialogContent>
       </Dialog>
-    </div>
+          </div>
   );
 }
 

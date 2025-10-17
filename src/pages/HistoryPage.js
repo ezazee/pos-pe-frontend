@@ -290,28 +290,17 @@ const printInvoice = () => window.print();
           {selectedSale && (
             <>
               <div className="overflow-y-auto flex-1">
-                <div
-                  id="invoice-to-print"
-                  className="p-6 text-[11px] leading-normal font-sans"
-                >
+                <div id="invoice-to-print" className="p-6 text-[11px] leading-normal font-sans">
                   {/* Header */}
                   <div className="text-center mb-4">
-                    <img
-                      src="/img/logo.png"
-                      alt="PE SKINPRO"
-                      className="h-14 mx-auto mb-2"
-                    />
+                    <img src="/img/logo.png" alt="PE SKINPRO" className="h-14 mx-auto mb-2" />
                     <p className="font-bold text-base">PE SKINPRO ID</p>
                     <p>PT Kilau Berlian Nusantara</p>
-                    <p>{currentSale.invoice_no}</p>
+                    <p>{selectedSale.invoice_no}</p>
                     <p className="mt-2">
-                      Royal Spring Residence. Block Titanium No. 05, 006/008,
-                      Jati Padang, Ps. Minggu, Jakarta Selatan
+                      Royal Spring Residence. Block Titanium No. 05, 006/008, Jati Padang, Ps. Minggu, Jakarta Selatan
                     </p>
-                    <p>
-                      Jl. Dukuh Patra No.75 001/013, Menteng Dalam, Tebet,
-                      Jakarta Selatan
-                    </p>
+                    <p>Jl. Dukuh Patra No.75 001/013, Menteng Dalam, Tebet, Jakarta Selatan</p>
                     <p className="mt-2">0812-1234-5678</p>
                     <p>adm.peskinproid@gmail.com</p>
                     <p className="mt-2 text-gray-700">
@@ -332,29 +321,19 @@ const printInvoice = () => window.print();
                   {/* Detail Transaksi */}
                   <div className="grid grid-cols-[max-content,1fr] gap-x-2 text-xs">
                     <div>Invoice Number:</div>
-                    <div className="text-right font-semibold">
-                       {selectedSale.invoice_no}
-                    </div>
+                    <div className="text-right font-semibold">{selectedSale.invoice_no}</div>
                     <div>Customer Name:</div>
-                    <div className="text-right">
-                       {selectedSale.customer_name}
-                    </div>
+                    <div className="text-right">{selectedSale.customer_name || "-"}</div>
                     <div>Payment Method:</div>
                     <div className="text-right">
-                      {" "}
-                      {selectedSale.payment_method.toLowerCase() === "qris"
-                        ? "QRIS"
-                        : "Bank Transfer"}
+                      {selectedSale.payment_method?.toLowerCase() === "qris" ? "QRIS" : "Debit EDC"}
                     </div>
-                    {selectedSale.payment_method === "qris" &&
-                      selectedSale.qris_acquirer && (
-                        <>
-                          <div>Nama Bank</div>
-                          <div className="text-right">
-                            : {selectedSale.qris_acquirer}
-                          </div>
-                        </>
-                      )}
+                    {selectedSale.payment_method === "qris" && selectedSale.qris_acquirer && (
+                      <>
+                        <div>Nama Bank:</div>
+                        <div className="text-right">{selectedSale.qris_acquirer}</div>
+                      </>
+                    )}
                   </div>
 
                   <div className="border-b border-black border-dashed my-2"></div>
@@ -365,38 +344,30 @@ const printInvoice = () => window.print();
                       <tr>
                         <th className="font-semibold w-[15%]">SKU</th>
                         <th className="font-semibold w-[45%]">Product</th>
-                        <th className="font-semibold text-center w-[15%]">
-                          Qty
-                        </th>
-                        <th className="font-semibold text-right w-[25%]">
-                          Price
-                        </th>
+                        <th className="font-semibold text-center w-[15%]">Qty</th>
+                        <th className="font-semibold text-right w-[25%]">Price</th>
                       </tr>
                     </thead>
                   </table>
                   <div className="border-b border-black border-dashed my-1"></div>
                   <table className="w-full text-left text-xs">
-<tbody>
-  {selectedSale.items.map((item, idx) => (
-    <tr key={idx}>
-      <td className="w-[15%]">{item.sku}</td>
-      <td className="w-[45%]">
-        {item.name}
-        {/* ✅ Tampilkan harga asli jika ada diskon */}
-        {item.original_price && item.original_price > item.price && (
-          <div className="text-gray-500 line-through">
-            {formatCurrency(item.original_price)}
-          </div>
-        )}
-      </td>
-      <td className="text-center w-[15%]">{item.qty} pcs</td>
-      <td className="text-right w-[25%]">
-        {formatCurrency(item.line_total)}
-      </td>
-    </tr>
-  ))}
-</tbody>
-
+                    <tbody>
+                      {selectedSale?.items?.map((item, idx) => (
+                        <tr key={idx}>
+                          <td className="w-[15%]">{item.sku}</td>
+                          <td className="w-[45%]">
+                            {item.name}
+                            {item.original_price && item.original_price > item.price && (
+                              <div className="text-gray-500 line-through">
+                                {formatCurrency(item.original_price)}
+                              </div>
+                            )}
+                          </td>
+                          <td className="text-center w-[15%]">{item.qty} pcs</td>
+                          <td className="text-right w-[25%]">{formatCurrency(item.line_total)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
                   </table>
 
                   {/* Total */}
@@ -408,9 +379,7 @@ const printInvoice = () => window.print();
                     {selectedSale.discount_amount > 0 && (
                       <div className="flex justify-between">
                         <span>Discount:</span>
-                        <span>
-                          -{formatCurrency(selectedSale.discount_amount)}
-                        </span>
+                        <span>-{formatCurrency(selectedSale.discount_amount)}</span>
                       </div>
                     )}
                     <div className="flex justify-between font-bold">
@@ -442,12 +411,10 @@ const printInvoice = () => window.print();
                   </div>
                 </div>
               </div>
+
+              {/* Footer Modal */}
               <div className="p-4 bg-gray-50 border-t flex-shrink-0">
-                <Button
-                  className="w-full text-white font-semibold"
-                  style={{ background: "#009CDE" }}
-                  onClick={printInvoice}
-                >
+                <Button className="w-full text-white font-semibold" style={{ background: "#009CDE" }} onClick={printInvoice}>
                   Cetak Invoice
                 </Button>
               </div>
