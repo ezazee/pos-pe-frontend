@@ -303,7 +303,7 @@ const printInvoice = () => window.print();
                     />
                     <p className="font-bold text-base">PE SKINPRO ID</p>
                     <p>PT Kilau Berlian Nusantara</p>
-                    <p>02.809.009.0-416.000</p>
+                    <p>{currentSale.invoice_no}</p>
                     <p className="mt-2">
                       Royal Spring Residence. Block Titanium No. 05, 006/008,
                       Jati Padang, Ps. Minggu, Jakarta Selatan
