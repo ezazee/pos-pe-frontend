@@ -305,7 +305,13 @@ function HistoryPage() {
                     </td>
                     <td className="py-3 px-2 text-center">
                       <Badge variant="outline">
-                        {sale.payment_method === "qris" ? "QRIS" : "Debit EDC"}
+                        {sale.payment_method === "qris"
+                          ? "QRIS"
+                          : sale.payment_method === "edc_debit"
+                          ? "Debit EDC"
+                          : sale.payment_method === "bank_transfer"
+                          ? "Transfer Bank"
+                          : "Debit EDC"}
                       </Badge>
                     </td>
                     <td className="py-3 px-2">
@@ -403,6 +409,10 @@ function HistoryPage() {
                         <div className="text-right">
                           {selectedSale.payment_method?.toLowerCase() === "qris"
                             ? "QRIS"
+                            : selectedSale.payment_method === "edc_debit"
+                            ? "Debit EDC"
+                            : selectedSale.payment_method === "bank_transfer"
+                            ? "Transfer Bank"
                             : "Bank Transfer"}
                         </div>
                         {selectedSale.payment_method === "qris" &&
@@ -414,6 +424,7 @@ function HistoryPage() {
                               </div>
                             </>
                           )}
+
                         {/* Info Free Item */}
                         {freeItem && (
                           <>

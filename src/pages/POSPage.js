@@ -321,10 +321,11 @@ function POSPage() {
       if (paymentMethod === "qris") {
         payload.qris_acquirer = qrisAcquirer;
         payload.qris_rrn = qrisRrn;
-      } else {
+      } else if (paymentMethod === "edc_debit") {
         payload.edc_issuer = edcIssuer;
         payload.edc_approval_code = edcApprovalCode;
       }
+      // bank_transfer tidak perlu field tambahan karena nomor rekening sudah fix
 
       const res = await axios.post(`${API}/sales`, payload, {
         headers: { Authorization: `Bearer ${token}` },
@@ -774,21 +775,21 @@ function POSPage() {
             <div
               role="tablist"
               aria-label="payment-method"
-              className="grid grid-cols-2 gap-2 mb-4"
+              className="grid grid-cols-3 gap-2 mb-4"
             >
               <Button
                 type="button"
                 role="tab"
                 aria-selected={paymentMethod === "qris"}
                 onClick={() => setPaymentMethod("qris")}
-                className={`h-11 w-full rounded-lg text-sm sm:text-base font-semibold flex items-center justify-center
+                className={`h-11 w-full rounded-lg text-xs sm:text-sm font-semibold flex items-center justify-center
             ${
               paymentMethod === "qris"
                 ? "bg-[#009CDE] text-white hover:bg-[#008ac4]"
                 : "bg-white text-gray-800 border border-gray-300 hover:bg-gray-50"
             }`}
               >
-                <QrCode className="mr-2 h-5 w-5" />
+                <QrCode className="mr-1 h-4 w-4" />
                 QRIS
               </Button>
               <Button
@@ -796,15 +797,30 @@ function POSPage() {
                 role="tab"
                 aria-selected={paymentMethod === "edc_debit"}
                 onClick={() => setPaymentMethod("edc_debit")}
-                className={`h-11 w-full rounded-lg text-sm sm:text-base font-semibold flex items-center justify-center
+                className={`h-11 w-full rounded-lg text-xs sm:text-sm font-semibold flex items-center justify-center
             ${
               paymentMethod === "edc_debit"
                 ? "bg-[#009CDE] text-white hover:bg-[#008ac4]"
                 : "bg-white text-gray-800 border border-gray-300 hover:bg-gray-50"
             }`}
               >
-                <CreditCard className="mr-2 h-5 w-5" />
+                <CreditCard className="mr-1 h-4 w-4" />
                 Debit EDC
+              </Button>
+              <Button
+                type="button"
+                role="tab"
+                aria-selected={paymentMethod === "bank_transfer"}
+                onClick={() => setPaymentMethod("bank_transfer")}
+                className={`h-11 w-full rounded-lg text-xs sm:text-sm font-semibold flex items-center justify-center
+            ${
+              paymentMethod === "bank_transfer"
+                ? "bg-[#009CDE] text-white hover:bg-[#008ac4]"
+                : "bg-white text-gray-800 border border-gray-300 hover:bg-gray-50"
+            }`}
+              >
+                <CreditCard className="mr-1 h-4 w-4" />
+                Transfer Bank
               </Button>
             </div>
 
@@ -839,7 +855,7 @@ function POSPage() {
                   </div>
                 </div>
               </div>
-            ) : (
+            ) : paymentMethod === "edc_debit" ? (
               <div className="space-y-3">
                 <Label className="text-sm font-medium mb-1 block">
                   Nama Pelanggan
@@ -857,7 +873,56 @@ function POSPage() {
                   />
                 </div>
               </div>
-            )}
+            ) : paymentMethod === "bank_transfer" ? (
+              <div className="space-y-3">
+                <div className="relative mb-4">
+                  <Label className="text-sm font-medium mb-1 block">
+                    Nama Pelanggan
+                  </Label>
+                  <div className="relative">
+                    <User
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                      size={16}
+                    />
+                    <Input
+                      placeholder="Masukkan Nama Pelanggan"
+                      value={customerName}
+                      onChange={(e) => setCustomerName(e.target.value)}
+                      className="pl-9"
+                    />
+                  </div>
+                </div>
+
+                <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                  <Label className="text-sm font-medium mb-2 block">
+                    Transfer ke Rekening:
+                  </Label>
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex-1">
+                      <div className="text-xs text-gray-600 mb-1">BCA</div>
+                      <div className="font-mono font-semibold text-lg">
+                        1234567890
+                      </div>
+                      <div className="text-xs text-gray-600 mt-1">
+                        a.n. PT Kilau Berlian Nusantara
+                      </div>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        navigator.clipboard.writeText("1234567890");
+                        toast.success("Nomor rekening berhasil di-copy");
+                      }}
+                      className="flex-shrink-0"
+                    >
+                      Copy
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ) : null}
 
             <div className="bg-gray-50 border border-gray-200 p-4 rounded-lg mt-4">
               <div className="flex justify-between items-center">
@@ -941,6 +1006,10 @@ function POSPage() {
                     <div className="text-right">
                       {currentSale.payment_method?.toLowerCase() === "qris"
                         ? "QRIS"
+                        : currentSale.payment_method === "edc_debit"
+                        ? "Debit EDC"
+                        : currentSale.payment_method === "bank_transfer"
+                        ? "Transfer Bank"
                         : "Bank Transfer"}
                     </div>
 
