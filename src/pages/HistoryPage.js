@@ -389,166 +389,130 @@ function HistoryPage() {
                         </p>
                       </div>
 
-                      {/* Detail */}
-                      <div className="grid grid-cols-[max-content,1fr] gap-x-2 text-xs">
-                        <div>Invoice Number:</div>
-                        <div className="text-right font-semibold">
-                          {selectedSale.invoice_no}
-                        </div>
-                        <div>Customer Name:</div>
-                        <div className="text-right">
-                          {selectedSale.customer_name}
-                        </div>
-                        <div>Payment Method:</div>
-                        <div className="text-right">
-                          {selectedSale.payment_method?.toLowerCase() === "qris"
-                            ? "QRIS"
-                            : "Bank Transfer"}
-                        </div>
-                        {selectedSale.payment_method === "qris" &&
-                          selectedSale.qris_acquirer && (
-                            <>
-                              <div>Nama Bank:</div>
-                              <div className="text-right">
-                                {selectedSale.qris_acquirer}
-                              </div>
-                            </>
-                          )}
-                        {/* Info Free Item */}
-                        {freeItem && (
-                          <>
-                            <div>Free Item:</div>
-                            <div className="text-right">
-                              {freeItem.name} (SKU: {freeItem.sku})
-                            </div>
-                          </>
-                        )}
-                      </div>
+                  {/* Detail Transaksi */}
+                  <div className="grid grid-cols-[max-content,1fr] gap-x-2 text-xs">
+                    <div>Invoice Number:</div>
+                    <div className="text-right font-semibold">
+                       {selectedSale.invoice_no}
+                    </div>
+                    <div>Customer Name:</div>
+                    <div className="text-right">
+                       {selectedSale.customer_name}
+                    </div>
+                    <div>Payment Method:</div>
+                    <div className="text-right">
+                      {" "}
+                      {selectedSale.payment_method.toLowerCase() === "qris"
+                        ? "QRIS"
+                        : "Bank Transfer"}
+                    </div>
+                    {selectedSale.payment_method === "qris" &&
+                      selectedSale.qris_acquirer && (
+                        <>
+                          <div>Nama Bank</div>
+                          <div className="text-right">
+                            : {selectedSale.qris_acquirer}
+                          </div>
+                        </>
+                      )}
+                  </div>
 
                       <div className="border-b border-black border-dashed my-2"></div>
 
-                      {/* Tabel Items */}
-                      <table className="w-full text-left text-xs">
-                        <thead>
-                          <tr>
-                            <th className="font-semibold w-[15%]">SKU</th>
-                            <th className="font-semibold w-[45%]">Product</th>
-                            <th className="font-semibold text-center w-[15%]">
-                              Qty
-                            </th>
-                            <th className="font-semibold text-right w-[25%]">
-                              Price
-                            </th>
-                          </tr>
-                        </thead>
-                      </table>
-                      <div className="border-b border-black border-dashed my-1"></div>
-                      <table className="w-full text-left text-xs">
-                        <tbody>
-                          {(selectedSale.items || []).map((item, idx) => (
-                            <tr key={idx}>
-                              <td className="w-[15%]">{item.sku}</td>
-                              <td className="w-[45%]">
-                                {item.name}
-                                {item.original_price &&
-                                  item.original_price > item.price && (
-                                    <div className="text-gray-500 line-through">
-                                      {formatCurrency(item.original_price)}
-                                    </div>
-                                  )}
-                              </td>
-                              <td className="text-center w-[15%]">
-                                {item.qty} pcs
-                              </td>
-                              <td className="text-right w-[25%]">
-                                {formatCurrency(item.line_total)}
-                              </td>
-                            </tr>
-                          ))}
+                  {/* Tabel Item */}
+                  <table className="w-full text-left text-xs">
+                    <thead>
+                      <tr>
+                        <th className="font-semibold w-[15%]">SKU</th>
+                        <th className="font-semibold w-[45%]">Product</th>
+                        <th className="font-semibold text-center w-[15%]">
+                          Qty
+                        </th>
+                        <th className="font-semibold text-right w-[25%]">
+                          Price
+                        </th>
+                      </tr>
+                    </thead>
+                  </table>
+                  <div className="border-b border-black border-dashed my-1"></div>
+                  <table className="w-full text-left text-xs">
+<tbody>
+  {selectedSale.items.map((item, idx) => (
+    <tr key={idx}>
+      <td className="w-[15%]">{item.sku}</td>
+      <td className="w-[45%]">
+        {item.name}
+        {/* ✅ Tampilkan harga asli jika ada diskon */}
+        {item.original_price && item.original_price > item.price && (
+          <div className="text-gray-500 line-through">
+            {formatCurrency(item.original_price)}
+          </div>
+        )}
+      </td>
+      <td className="text-center w-[15%]">{item.qty} pcs</td>
+      <td className="text-right w-[25%]">
+        {formatCurrency(item.line_total)}
+      </td>
+    </tr>
+  ))}
+</tbody>
 
-                          {/* Tambahkan baris Rp 0 hanya jika belum ada di items */}
-                          {freeItem && !freeItem.alreadyInItems && (
-                            <tr>
-                              <td className="w-[15%]">{freeItem.sku}</td>
-                              <td className="w-[45%]">
-                                {freeItem.name}{" "}
-                                <span className="text-green-700 font-semibold">
-                                  (Gratis 1 unit)
-                                </span>
-                              </td>
-                              <td className="text-center w-[15%]">1 pcs</td>
-                              <td className="text-right w-[25%]">
-                                {formatCurrency(0)}
-                              </td>
-                            </tr>
-                          )}
-                        </tbody>
-                      </table>
+                  </table>
 
-                      {/* Ringkasan */}
-                      <div className="border-t border-black border-dashed pt-2 mt-2 text-xs space-y-1">
-                        <div className="flex justify-between">
-                          <span>Subtotal:</span>
-                          <span>{formatCurrency(selectedSale.subtotal)}</span>
-                        </div>
-                        {selectedSale.discount_amount > 0 && (
-                          <div className="flex justify-between">
-                            <span>Discount:</span>
-                            <span>
-                              -{formatCurrency(selectedSale.discount_amount)}
-                            </span>
-                          </div>
-                        )}
-                        {freeItem && (
-                          <div className="flex justify-between">
-                            <span>Free Item:</span>
-                            <span>
-                              {freeItem.name} (SKU: {freeItem.sku})
-                            </span>
-                          </div>
-                        )}
-                        <div className="flex justify-between font-bold">
-                          <span>Amount Due:</span>
-                          <span>{formatCurrency(selectedSale.total)}</span>
-                        </div>
+                  {/* Total */}
+                  <div className="border-t border-black border-dashed pt-2 mt-2 text-xs space-y-1">
+                    <div className="flex justify-between">
+                      <span>Subtotal:</span>
+                      <span>{formatCurrency(selectedSale.subtotal)}</span>
+                    </div>
+                    {selectedSale.discount_amount > 0 && (
+                      <div className="flex justify-between">
+                        <span>Discount:</span>
+                        <span>
+                          -{formatCurrency(selectedSale.discount_amount)}
+                        </span>
                       </div>
-
-                      <div className="border-b border-black border-dashed my-2"></div>
-
-                      {/* Footer */}
-                      <div className="text-center mt-4">
-                        <p>Thank You For Your Purchase!</p>
-                        <p className="mt-2">Follow Us To See More Update</p>
-                        <div className="flex flex-col items-center gap-1 mt-2">
-                          <div className="flex items-center gap-2">
-                            <InstagramIcon className="h-4 w-4" />
-                            <span>peskinpro.id</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <TikTokIcon className="h-4 w-4" />
-                            <span>@peskinproid</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Globe className="h-4 w-4" />
-                            <span>www.peskinpro.id</span>
-                          </div>
-                        </div>
-                      </div>
+                    )}
+                    <div className="flex justify-between font-bold">
+                      <span>Amount Due:</span>
+                      <span>{formatCurrency(selectedSale.total)}</span>
                     </div>
                   </div>
 
-                  <div className="p-4 bg-gray-50 border-t flex-shrink-0">
-                    <Button
-                      className="w-full text-white font-semibold"
-                      style={{ background: "#009CDE" }}
-                      onClick={printInvoice}
-                    >
-                      Cetak Invoice
-                    </Button>
+                      <div className="border-b border-black border-dashed my-2"></div>
+
+                  {/* Footer */}
+                  <div className="text-center mt-4">
+                    <p>Thank You For Your Purchase!</p>
+                    <p className="mt-2">Follow Us To See More Update</p>
+                    <div className="flex flex-col items-center gap-1 mt-2">
+                      <div className="flex items-center gap-2">
+                        <InstagramIcon className="h-4 w-4" />
+                        <span>peskinpro.id</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <TikTokIcon className="h-4 w-4" />
+                        <span>@peskinproid</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Globe className="h-4 w-4" />
+                        <span>www.peskinpro.id</span>
+                      </div>
+                    </div>
                   </div>
-                </>
-              );
-            })()}
+                </div>
+              </div>
+              <div className="p-4 bg-gray-50 border-t flex-shrink-0">
+                <Button
+                  className="w-full text-white font-semibold"
+                  style={{ background: "#009CDE" }}
+                  onClick={printInvoice}
+                >
+                  Cetak Invoice
+                </Button>
+              </div>
+            </>
+          )}
         </DialogContent>
       </Dialog>
     </div>
