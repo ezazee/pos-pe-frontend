@@ -63,6 +63,10 @@ function POSPage() {
   const [cart, setCart] = useState([]);
   const [discountInput, setDiscountInput] = useState("0");
 
+  // free item (nama + SKU) untuk invoice
+  const [freebieName, setFreebieName] = useState("");
+  const [freebieSku, setFreebieSku] = useState("");
+
   // payment
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("qris");
@@ -120,7 +124,6 @@ function POSPage() {
 
   // ===== Helpers =====
   const formatCurrency = (n) => `Rp ${Number(n || 0).toLocaleString("id-ID")}`;
-  const formatCurrencyOnly = (n) => Number(n || 0).toLocaleString("id-ID");
   const addToCart = (product) => {
     const ex = cart.find((i) => i.product_id === product.id);
     if (ex) updateQuantity(product.id, ex.qty + 1);
@@ -172,6 +175,27 @@ function POSPage() {
   const applyDiscountPercentage = (percentage) => {
     const discountValue = Math.round((subtotal() * percentage) / 100);
     setDiscountInput(String(discountValue));
+    setFreebieName("");
+    setFreebieSku("");
+  };
+
+  // 🎁 Acak free item dari etalase (aktif & stok > 0), TANPA mengubah total
+  const applyRandomFreeProductFromCatalog = () => {
+    if (subtotal() <= 0) {
+      toast.error("Tambahkan item ke keranjang terlebih dahulu");
+      return;
+    }
+    const pool = products.filter(
+      (p) => p && p.is_active !== false && Number(p.stock_qty) > 0
+    );
+    if (pool.length === 0) {
+      toast.error("Tidak ada produk aktif dengan stok tersedia di etalase");
+      return;
+    }
+    const chosen = pool[Math.floor(Math.random() * pool.length)];
+    setFreebieName(chosen.name);
+    setFreebieSku(chosen.sku || "");
+    toast.success(`Free item: ${chosen.name}`);
   };
 
   // ===== Create product =====
@@ -257,7 +281,6 @@ function POSPage() {
       toast.success("Produk diperbarui");
       setShowEditProduct(false);
       setEditProduct(null);
-      // refresh local list cepat:
       setProducts((prev) =>
         prev.map((p) => (p.id === res.data.id ? res.data : p))
       );
@@ -306,12 +329,38 @@ function POSPage() {
       const res = await axios.post(`${API}/sales`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setCurrentSale(res.data);
+
+      // simpan info free item (nama + SKU) ke state invoice lokal
+      const augmentedSale = {
+        ...res.data,
+        free_item_name: freebieName || null,
+        free_item_sku: freebieSku || null,
+      };
+      setCurrentSale(augmentedSale);
+
+      // simpan free item ke localStorage agar bisa dibaca oleh HistoryPage
+      if (freebieName) {
+        try {
+          const cacheKey = "pe_freebies";
+          const existing = localStorage.getItem(cacheKey);
+          const map = existing ? JSON.parse(existing) : {};
+          map[res.data.invoice_no] = {
+            name: freebieName,
+            sku: freebieSku || "",
+          };
+          localStorage.setItem(cacheKey, JSON.stringify(map));
+        } catch (e) {
+          console.error("Gagal menyimpan free item ke cache:", e);
+        }
+      }
+
       toast.success("Transaksi berhasil");
       setShowPaymentDialog(false);
       setShowInvoice(true);
       setCart([]);
-      setDiscountAmount(0);
+      setDiscountInput("0");
+      setFreebieName("");
+      setFreebieSku("");
       setCustomerName("");
       setQrisAcquirer("");
       setQrisRrn("");
@@ -324,7 +373,7 @@ function POSPage() {
     }
   }
 
-const printInvoice = () => window.print();
+  const printInvoice = () => window.print();
 
   // ======================= UI =======================
   return (
@@ -411,7 +460,6 @@ const printInvoice = () => window.print();
                       className="font-bold items-baseline"
                       style={{ color: "#009CDE" }}
                     >
-                      {/* Logika untuk menampilkan harga coret jika ada */}
                       {product.original_price &&
                       product.original_price > product.price ? (
                         <>
@@ -584,9 +632,7 @@ const printInvoice = () => window.print();
                   value={discountInput}
                   onChange={(e) => {
                     const value = e.target.value;
-                    if (/^\d*$/.test(value)) {
-                      setDiscountInput(value);
-                    }
+                    if (/^\d*$/.test(value)) setDiscountInput(value);
                   }}
                   className="w-32 text-right"
                   placeholder="0"
@@ -625,11 +671,42 @@ const printInvoice = () => window.print();
                 <Button
                   size="sm"
                   variant="destructive"
-                  onClick={() => setDiscountInput("0")}
+                  onClick={() => {
+                    setDiscountInput("0");
+                    setFreebieName("");
+                    setFreebieSku("");
+                  }}
                 >
                   Reset
                 </Button>
+
+                {/* 🎁 Random dari Etalase (tanpa ubah total) */}
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={applyRandomFreeProductFromCatalog}
+                  className="ml-auto"
+                  title="Acak satu produk dari etalase (aktif & stok tersedia) lalu tandai gratis 1 unit (tanpa mengubah total)"
+                >
+                  🎁 Random Produk Gratis
+                </Button>
               </div>
+
+              {/* Info free item */}
+              {freebieName && (
+                <div className="text-xs text-green-700 mt-2">
+                  Produk gratis:{" "}
+                  <span className="font-semibold">{freebieName}</span>
+                  {freebieSku ? (
+                    <span className="ml-1 text-gray-600">
+                      (SKU: {freebieSku})
+                    </span>
+                  ) : null}
+                  <div className="text-[10px] text-gray-500">
+                    *Free item tidak mengurangi total pembayaran
+                  </div>
+                </div>
+              )}
 
               <div className="flex flex-wrap items-baseline justify-between gap-x-2 text-xl font-bold pt-2 border-t">
                 <span>TOTAL:</span>
@@ -688,14 +765,11 @@ const printInvoice = () => window.print();
 
       {/* DIALOGS */}
       <Dialog open={showPaymentDialog} onOpenChange={setShowPaymentDialog}>
-        {/* ✅ 1. Ubah DialogContent menjadi flex container */}
         <DialogContent className="w-[92vw] max-w-[560px] p-0 flex flex-col max-h-[90vh]">
-          {/* ✅ 2. Buat Header tetap di atas */}
           <DialogHeader className="p-6 pb-4 border-b flex-shrink-0">
             <DialogTitle className="text-lg">Metode Pembayaran</DialogTitle>
           </DialogHeader>
 
-          {/* ✅ 3. Bungkus semua konten form dalam div yang bisa di-scroll */}
           <div className="p-6 overflow-y-auto flex-1">
             <div
               role="tablist"
@@ -808,15 +882,11 @@ const printInvoice = () => window.print();
         </DialogContent>
       </Dialog>
 
-      {/* ================================== */}
-      {/* ===== DIALOG INVOICE BARU ====== */}
-      {/* ================================== */}
+      {/* ===== DIALOG INVOICE ===== */}
       <Dialog open={showInvoice} onOpenChange={setShowInvoice}>
-        {/* ✅ 1. Modifikasi DialogContent untuk layout flex vertikal */}
         <DialogContent className="max-w-sm w-[95vw] p-0 flex flex-col max-h-[90vh]">
           {currentSale && (
             <>
-              {/* ✅ 2. Area Konten yang Bisa Di-scroll */}
               <div className="overflow-y-auto flex-1">
                 <div
                   id="invoice-to-print"
@@ -861,21 +931,30 @@ const printInvoice = () => window.print();
                   <div className="grid grid-cols-[max-content,1fr] gap-x-2 text-xs">
                     <div>Invoice Number:</div>
                     <div className="text-right font-semibold">
-                      {" "}
                       {currentSale.invoice_no}
                     </div>
                     <div>Customer Name:</div>
                     <div className="text-right">
-                      {" "}
                       {currentSale.customer_name}
                     </div>
                     <div>Payment Method:</div>
                     <div className="text-right">
-                      {" "}
-                      {currentSale.payment_method.toLowerCase() === "qris"
+                      {currentSale.payment_method?.toLowerCase() === "qris"
                         ? "QRIS"
                         : "Bank Transfer"}
                     </div>
+
+                    {/* info free item (nama + SKU) */}
+                    {currentSale.free_item_name && (
+                      <>
+                        <div>Free Item:</div>
+                        <div className="text-right">
+                          {currentSale.free_item_name} (SKU:{" "}
+                          {currentSale.free_item_sku || "-"})
+                        </div>
+                      </>
+                    )}
+
                     {currentSale.payment_method === "qris" &&
                       currentSale.qris_acquirer && (
                         <>
@@ -912,7 +991,6 @@ const printInvoice = () => window.print();
                           <td className="w-[15%]">{item.sku}</td>
                           <td className="w-[45%]">
                             {item.name}
-                            {/* ✅ Tampilkan harga asli jika ada diskon */}
                             {item.original_price &&
                               item.original_price > item.price && (
                                 <div className="text-gray-500 line-through">
@@ -928,6 +1006,25 @@ const printInvoice = () => window.print();
                           </td>
                         </tr>
                       ))}
+
+                      {/* Free item (nama + SKU), harga Rp 0 */}
+                      {currentSale.free_item_name && (
+                        <tr>
+                          <td className="w-[15%]">
+                            {currentSale.free_item_sku || "-"}
+                          </td>
+                          <td className="w-[45%]">
+                            {currentSale.free_item_name}{" "}
+                            <span className="text-green-700 font-semibold">
+                              (Gratis 1 unit)
+                            </span>
+                          </td>
+                          <td className="text-center w-[15%]">1 pcs</td>
+                          <td className="text-right w-[25%]">
+                            {formatCurrency(0)}
+                          </td>
+                        </tr>
+                      )}
                     </tbody>
                   </table>
 
@@ -942,6 +1039,15 @@ const printInvoice = () => window.print();
                         <span>Discount:</span>
                         <span>
                           -{formatCurrency(currentSale.discount_amount)}
+                        </span>
+                      </div>
+                    )}
+                    {currentSale.free_item_name && (
+                      <div className="flex justify-between">
+                        <span>Free Item:</span>
+                        <span>
+                          {currentSale.free_item_name} (SKU:{" "}
+                          {currentSale.free_item_sku || "-"})
                         </span>
                       </div>
                     )}
@@ -975,7 +1081,6 @@ const printInvoice = () => window.print();
                 </div>
               </div>
 
-              {/* ✅ 3. Footer Modal (Tombol Cetak) dibuat statis */}
               <div className="p-4 bg-gray-50 border-t flex-shrink-0">
                 <Button
                   className="w-full text-white font-semibold"
@@ -1088,9 +1193,7 @@ const printInvoice = () => window.print();
             <Button
               variant="outline"
               className="flex-1"
-              onClick={() => {
-                setShowCreateProduct(false);
-              }}
+              onClick={() => setShowCreateProduct(false)}
             >
               Batal
             </Button>
