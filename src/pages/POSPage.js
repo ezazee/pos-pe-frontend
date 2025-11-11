@@ -901,7 +901,7 @@ function POSPage() {
                     <div className="flex-1">
                       <div className="text-xs text-gray-600 mb-1">BCA</div>
                       <div className="font-mono font-semibold text-lg">
-                        1234567890
+                        5230771199
                       </div>
                       <div className="text-xs text-gray-600 mt-1">
                         a.n. PT Kilau Berlian Nusantara
